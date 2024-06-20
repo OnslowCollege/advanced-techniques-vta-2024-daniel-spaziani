@@ -7,15 +7,23 @@ Date: 17/6/24
 
 # Enter your code here.
 
+from random import randint
+
 # Constant for number of cards players start with in their hands.
-NUMBER_OF_CARDS_IN_HAND = 7
+HAND_SIZE = 7
 
 
 class Card:
-    """Template for a card, stores all required information."""
+    """Template for a card, store all required information."""
 
     def __init__(self, number: int, colour: str, function) -> None:
-        """Save all info to function."""
+        """
+        Save all info to function.
+
+        number - the card's numerical number, not read if not a normal card.
+        colour - red, green, blue, or yellow.
+        function - says what kind of special card it is.
+        """
         self.number = int(number)
         self.colour = colour
         # This can be one of four values.
@@ -27,9 +35,8 @@ class Card:
         # "wildcard" - allows placer to change colour to whatever they want.
         self.function = function
 
-    def calculate_change(self, card_placed_on: Card) -> bool:
-        """Based on card that this one is being placed on,
-        calculates what values to change."""
+    def calculate_change(self, card_placed_on) -> bool:
+        """Based on cards, calculate validity and what values to change."""
         # Starts by working out whether the card play is valid or not.
         if (
             self.colour != card_placed_on.colour
@@ -50,6 +57,30 @@ class Card:
             # If it's a colour change card, then passes that on.
             # Else if it's a plus two or four card, then passes on that value.
             pass
+        return valid
+
+
+class Player:
+    """Store methods and data for each player."""
+
+    def __init__(self) -> None:
+        """
+        Set up variables for player data.
+
+        hand - list of cards in player's posession.
+        """
+        self.hand: list = []
+
+    def deal(self):
+        """Deal cards to the player."""
+        # Repeats until player has enough cards in their hand.
+        while len(self.hand) < HAND_SIZE:
+            # Chooses a random card from the deck.
+            card_to_add = DECK[randint(0, len(DECK) - 1)]
+            # Now checks it isn't already in hand.
+            if card_to_add not in self.hand:
+                # Then adds card to hand.
+                self.hand.append(card_to_add)
 
 
 # Constant for deck of cards, with card items to create deck list to pick from.
@@ -171,6 +202,43 @@ DECK: list[Card] = [
 
 
 def game():
-    """Main game function."""
+    """Do main game function."""
+    # Asks user who they want to face, validates, and then selects opponent.
     # Starts by dealing cards to both the user and the other player.
-    # Gets seven random cards from the deck, and gives them to each player.
+    # # Gets seven random cards from the deck, and gives them to each player.
+    # Ensures there are no double ups, and that cards are all unique.
+    verify_deal(user, computer)
+    # Then starts game.
+    # Asks user for input, checks it, and makes the move.
+    # Generate's the computer's move.
+
+
+def verify_deal():
+    """Ensure that the player and the computer don't have the same cards."""
+    # Starts assuming hand won't need to be reshuffled, unless proven.
+    reshuffle_hand = False
+    # Creates variable to run loop, which will stay true until valid.
+    run_verify = True
+    while run_verify is True:
+        # Starts by dealing to them both.
+        user.deal()
+        computer.deal()
+        # Now compares the two and sees if there's any overlap.
+        # Runs through each of the user's cards.
+        for card in user.hand:
+            # Checks if the card is also in the computer's hand.
+            if card in computer.hand:
+                # Makes computer reshuffle their cards.
+                # Make computer shuffle instead of user to minimise disruption.
+                reshuffle_hand = True
+        # Now that verification is done, checks if it's valid or not.
+        # If reshuffle hand is true then it must reshuffle.
+        # Otherwise it's valid and can continue.
+        if reshuffle_hand is False:
+            # Values are valid.
+            # Continues with programme.
+            run_verify = False
+        else:
+            # If reshuffle_hand is True, then needs to redo.
+            # Resets the variable so it can check again next time.
+            reshuffle_hand = False
