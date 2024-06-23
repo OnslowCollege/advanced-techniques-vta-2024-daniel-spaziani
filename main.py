@@ -203,17 +203,28 @@ DECK: list[Card] = [
 
 def game():
     """Do main game function."""
+    # Creates user instance of Player.
+    user = Player()
+    # TODO: DELETE THIS, ONLY FOR DEBUGGING.
+    computer = Player()
     # Asks user who they want to face, validates, and then selects opponent.
     # Starts by dealing cards to both the user and the other player.
     # # Gets seven random cards from the deck, and gives them to each player.
     # Ensures there are no double ups, and that cards are all unique.
     verify_deal(user, computer)
+    # TODO: DELETE THIS, ONLY FOR DEBUGGING.
+    print("USER FINAL:")
+    for card in user.hand:
+        print(card.number, card.colour, card.function)
+    print("COMPUTER FINAL:")
+    for card in computer.hand:
+        print(card.number, card.colour, card.function)
     # Then starts game.
     # Asks user for input, checks it, and makes the move.
     # Generate's the computer's move.
 
 
-def verify_deal():
+def verify_deal(user: Player, computer: Player):
     """Ensure that the player and the computer don't have the same cards."""
     # Starts assuming hand won't need to be reshuffled, unless proven.
     reshuffle_hand = False
@@ -234,11 +245,21 @@ def verify_deal():
         # Now that verification is done, checks if it's valid or not.
         # If reshuffle hand is true then it must reshuffle.
         # Otherwise it's valid and can continue.
+        # TODO: REMOVE THIS, only for debugging.
+        print("User:")
+        for card in user.hand:
+            print(card.number, card.colour, card.function)
+        print("Computer:")
+        for card in computer.hand:
+            print(card.number, card.colour, card.function)
         if reshuffle_hand is False:
             # Values are valid.
             # Continues with programme.
             run_verify = False
-        else:
+        elif reshuffle_hand is True:
             # If reshuffle_hand is True, then needs to redo.
             # Resets the variable so it can check again next time.
             reshuffle_hand = False
+
+# Starts game.
+game()
