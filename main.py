@@ -212,13 +212,6 @@ def game():
     # # Gets seven random cards from the deck, and gives them to each player.
     # Ensures there are no double ups, and that cards are all unique.
     verify_deal(user, computer)
-    # TODO: DELETE THIS, ONLY FOR DEBUGGING.
-    print("USER FINAL:")
-    for card in user.hand:
-        print(card.number, card.colour, card.function)
-    print("COMPUTER FINAL:")
-    for card in computer.hand:
-        print(card.number, card.colour, card.function)
     # Then starts game.
     # Asks user for input, checks it, and makes the move.
     # Generate's the computer's move.
@@ -245,21 +238,18 @@ def verify_deal(user: Player, computer: Player):
         # Now that verification is done, checks if it's valid or not.
         # If reshuffle hand is true then it must reshuffle.
         # Otherwise it's valid and can continue.
-        # TODO: REMOVE THIS, only for debugging.
-        print("User:")
-        for card in user.hand:
-            print(card.number, card.colour, card.function)
-        print("Computer:")
-        for card in computer.hand:
-            print(card.number, card.colour, card.function)
         if reshuffle_hand is False:
             # Values are valid.
             # Continues with programme.
             run_verify = False
         elif reshuffle_hand is True:
-            # If reshuffle_hand is True, then needs to redo.
-            # Resets the variable so it can check again next time.
+            # Invalid, needs to run again.
+            # Resets the variable so it can use it to check again next time.
             reshuffle_hand = False
+            # And resets players' hands for next time.
+            user.hand = []
+            computer.hand = []
+
 
 # Starts game.
 game()
