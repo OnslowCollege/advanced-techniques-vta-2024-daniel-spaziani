@@ -35,7 +35,7 @@ class Card:
         # "wildcard" - allows placer to change colour to whatever they want.
         self.function = function
 
-    def calculate_change(self, card_placed_on) -> bool:
+    def calculate_change(self, card_placed_on, player_who_placed) -> bool:
         """Based on cards, calculate validity and what values to change."""
         # Starts by working out whether the card play is valid or not.
         if (
@@ -48,15 +48,31 @@ class Card:
             # Else it is valid.
             valid = True
         if valid is True:
-            # TODO: This section.
             # The programme now knows that the move is valid.
             # Now works out what exact operation to make.
-            # Then updates the card on top to the new one.
-            # First removes the card from the user's hand.
+            if self.function == "normal":
+                # It's a normal card, so it can just add it to pile.
+                play_pile.append(self)
             # Then checks if it's a specific purpose card, and checks its use.
+            elif self.function == "skip":
+                # The next turn must be skipped.
+                # TODO: FINISH THIS ONCE LOGIC DONE.
             # If it's a colour change card, then passes that on.
+            elif self.function == "wildcard":
+                # The player can now change the colour..
+                # TODO: FINISH THIS ONCE LOGIC DONE.
             # Else if it's a plus two or four card, then passes on that value.
-            pass
+            elif self.function == "reverse":
+                # Reverse the direction of play, giving user another turn.
+                # TODO: FINISH THIS ONCE LOGIC DONE.
+            elif self.function == "pickup two":
+                # Next player must pick up two.
+                # TODO: FINISH THIS ONCE LOGIC DONE.
+            elif self.function == "pickup four":
+                # The next player must pick up four.
+                # TODO: FINISH THIS ONCE LOGIC DONE.
+            # Then can remove it from the player's hand.
+            player_who_placed.hand.pop(self)
         return valid
 
 
@@ -81,6 +97,16 @@ class Player:
             if card_to_add not in self.hand:
                 # Then adds card to hand.
                 self.hand.append(card_to_add)
+
+    def move(self, card_placed_on) -> None:
+        """Lets player make their move, and runs card change function."""
+        # Sets up valid variable which is used to validate the move.
+        valid = False
+        # Repeats until a valid move is attained.
+        while valid is False:
+            # Asks player which card to choose.
+            # Runs function on card chosen, to work out correct move.
+            card.calculate_change(card_placed_on, self)
 
 
 # Constant for deck of cards, with card items to create deck list to pick from.
@@ -203,6 +229,8 @@ DECK: list[Card] = [
 
 def game():
     """Do main game function."""
+    # Creates the pile for cards being played.
+    play_pile = []
     # Creates user instance of Player.
     user = Player()
     # TODO: DELETE THIS, ONLY FOR DEBUGGING.
@@ -214,7 +242,9 @@ def game():
     verify_deal(user, computer)
     # Then starts game.
     # Asks user for input, checks it, and makes the move.
-    # Generate's the computer's move.
+    user.move()
+    # Generates the computer's move.
+    generate_move(computer)
 
 
 def verify_deal(user: Player, computer: Player):
