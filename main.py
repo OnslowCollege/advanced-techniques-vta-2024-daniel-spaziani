@@ -241,10 +241,18 @@ def game():
     # Ensures there are no double ups, and that cards are all unique.
     verify_deal(user, computer)
     # Then starts game.
-    # Asks user for input, checks it, and makes the move.
-    user.move()
-    # Generates the computer's move.
-    generate_move(computer)
+    # Creates variable to check whether or not the game should keep running.
+    game_running = True
+    # Repeats until one of the players has no cards left in their hand.
+    while game_running is True:
+        # Asks user for input, checks it, and makes the move.
+        user.move()
+        # Generates the computer's move.
+        generate_move(computer)
+        # Checks if either of the hands are empty and if so ends the game.
+        if user.hand == [] or computer.hand == []:
+            game_running = False
+    # TODO: Win Message
 
 
 def verify_deal(user: Player, computer: Player):
