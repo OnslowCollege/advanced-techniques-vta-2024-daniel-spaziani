@@ -8,6 +8,7 @@ Date: 17/6/24
 # Enter your code here.
 
 from random import randint
+import pygame
 
 # Constant for number of cards players start with in their hands.
 HAND_SIZE = 7
