@@ -9,6 +9,8 @@ Date: 17/6/24
 
 from random import randint
 import pygame
+import pygame_menu
+from pygame_menu import themes
 
 # Constant for number of cards players start with in their hands.
 HAND_SIZE = 7
@@ -292,3 +294,6 @@ def verify_deal(user: Player, computer: Player):
 
 # Starts game.
 game()
+
+pygame.init()
+surface = pygame.display.set_mode((600, 400))
