@@ -295,5 +295,10 @@ def verify_deal(user: Player, computer: Player):
 # Starts game.
 game()
 
+# Starts pygame.
 pygame.init()
-surface = pygame.display.set_mode((600, 400))
+# Creates display.
+res = (720,720)
+# Opens it up.
+screen = pygame.display.set_mode(res) 
+
