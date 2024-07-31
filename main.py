@@ -309,7 +309,7 @@ screen = pygame.display.set_mode(res)
 screen.fill((0,255,0))
 pygame.draw.rect(screen,(255,0,0),[200,300,100,50])
 running  = True
-while running:  
+while running:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
            running = False
