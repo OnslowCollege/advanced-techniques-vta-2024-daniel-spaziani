@@ -312,4 +312,4 @@ while running:
     pygame.display.update()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
-           running = False
+            running = False
