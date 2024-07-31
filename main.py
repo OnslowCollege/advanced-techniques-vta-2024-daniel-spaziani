@@ -302,6 +302,7 @@ def verify_deal(user: Player, computer: Player):
 
 # Starts pygame.
 pygame.init()
+pygame.display.init()
 # Creates display.
 res = (720,720)
 # Opens it up.
