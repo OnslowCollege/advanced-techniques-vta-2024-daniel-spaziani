@@ -304,9 +304,7 @@ def verify_deal(user: Player, computer: Player):
 pygame.init()
 pygame.display.init()
 # Creates display.
-res = (720,720)
-# Opens it up.
-screen = pygame.display.set_mode(res)
+screen = pygame.display.set_mode((576,720))
 screen.fill((0,255,0))
 pygame.draw.rect(screen,(255,0,0),[200,300,100,50])
 running  = True
