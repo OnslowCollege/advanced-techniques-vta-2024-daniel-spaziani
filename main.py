@@ -58,20 +58,25 @@ class Card:
                 play_pile.append(self)
             # Then checks if it's a specific purpose card, and checks its use.
             elif self.function == "skip":
+                pass
                 # The next turn must be skipped.
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             # If it's a colour change card, then passes that on.
             elif self.function == "wildcard":
+                pass
                 # The player can now change the colour..
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             # Else if it's a plus two or four card, then passes on that value.
             elif self.function == "reverse":
+                pass
                 # Reverse the direction of play, giving user another turn.
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             elif self.function == "pickup two":
+                pass
                 # Next player must pick up two.
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             elif self.function == "pickup four":
+                pass
                 # The next player must pick up four.
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             # Then can remove it from the player's hand.
@@ -293,7 +298,7 @@ def verify_deal(user: Player, computer: Player):
 
 
 # Starts game.
-game()
+# game()
 
 # Starts pygame.
 pygame.init()
@@ -301,4 +306,5 @@ pygame.init()
 res = (720,720)
 # Opens it up.
 screen = pygame.display.set_mode(res) 
-
+screen.fill((0,255,0))
+pygame.display.update()
