@@ -9,11 +9,14 @@ Date: 17/6/24
 
 from random import randint
 import pygame
-# import pygame_menu
-# from pygame_menu import themes
 
 # Constant for number of cards players start with in their hands.
 HAND_SIZE = 7
+# Constants for colours to use.
+LIGHT_GREEN = (50,205,50)
+DARK_GREEN = (0,100,0)
+RED = (255,0,0)
+WHITE = (255,255,255)
 
 
 class Card:
@@ -305,11 +308,13 @@ pygame.init()
 pygame.display.init()
 # Creates display.
 screen = pygame.display.set_mode((720,576))
-screen.fill((0,255,0))
-pygame.draw.rect(screen,(255,0,0),[200,300,100,50])
-running  = True
+screen.fill(LIGHT_GREEN)
+pygame.draw.rect(screen,RED,[200,300,100,50])
+pygame.draw.rect(screen, DARK_GREEN, [250,400,200,50])
+pygame.draw.rect(screen, RED, [0,0,100,100])
+running = True
 while running:
     pygame.display.update()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
-           running = False
+            running = False
