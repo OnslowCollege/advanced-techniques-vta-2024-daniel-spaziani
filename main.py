@@ -304,12 +304,12 @@ def verify_deal(user: Player, computer: Player):
 pygame.init()
 pygame.display.init()
 # Creates display.
-screen = pygame.display.set_mode((576,720))
+screen = pygame.display.set_mode((720,576))
 screen.fill((0,255,0))
 pygame.draw.rect(screen,(255,0,0),[200,300,100,50])
 running  = True
 while running:
+    pygame.display.update()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
            running = False
-pygame.display.update()
