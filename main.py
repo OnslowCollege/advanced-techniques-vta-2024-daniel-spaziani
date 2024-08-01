@@ -17,6 +17,17 @@ LIGHT_GREEN = (50,205,50)
 DARK_GREEN = (0,100,0)
 RED = (255,0,0)
 WHITE = (255,255,255)
+# Screen size constants.
+SCREEN_WIDTH = 720
+SCREEN_HEIGHT = 576
+# Starts pygame.
+pygame.init()
+pygame.display.init()
+# Creates text font.
+text_font = pygame.font.SysFont("Helvetica", 30)
+# Creates display.
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen.fill(LIGHT_GREEN)
 
 
 class Card:
@@ -300,21 +311,38 @@ def verify_deal(user: Player, computer: Player):
             computer.hand = []
 
 
+def draw_text(text, font, x, y):
+    """Takes in text, a font, and coordinates, and outputs onto screen."""
+    img = font.render(text, True, (0, 0, 0))
+    screen.blit(img, (x, y))
+
+
 # Starts game.
 # game()
 
-# Starts pygame.
-pygame.init()
-pygame.display.init()
-# Creates display.
-screen = pygame.display.set_mode((720,576))
-screen.fill(LIGHT_GREEN)
-pygame.draw.rect(screen,RED,[200,300,100,50])
-pygame.draw.rect(screen, DARK_GREEN, [250,400,200,50])
-pygame.draw.rect(screen, RED, [0,0,100,100])
+# Font test.
+draw_text("Test 123", text_font, 300, 250)
+# Shapes for testing.
+pygame.draw.rect(screen, RED, [200, 300, 100, 50])
+pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
+pygame.draw.rect(screen, RED, [0, 0, 100, 100])
+# Creates buttons for user to click.
+button_test = pygame.Surface((200, 50))
+button_test.fill((0, 0, 255))
+button_test.blit(text_font.render("Button", True, (0, 0, 0)), (5, 5))
+screen.blit(button_test, (200, 200))
+# Loads in images.
+test_image = pygame.image.load("test.png")
+# Creates card visuals.
 running = True
 while running:
     pygame.display.update()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            if (
+                200 <= mouse_x <= 200 + 200
+                and 200 <= mouse_y <= 200 + 50):
+                screen.blit(test_image, (0, 0))
