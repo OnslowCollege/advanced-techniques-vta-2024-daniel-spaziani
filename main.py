@@ -28,9 +28,30 @@ text_font = pygame.font.SysFont("Helvetica", 30)
 # Creates display.
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 screen.fill(LIGHT_GREEN)
+# Constants for default button text position.
+BUTTON_TEXT_X = 5
+BUTTON_TEXT_Y = 5
+# List to store all buttons as they're created.
+# List formatted like this: [[x, y, x_size, y_size, text, colour, button]]
+buttons: list = []
+# Constants for accessing list.
+# Constant for x coordinate.
+BUTTONS_X = 0
+# Constant for y coordinate.
+BUTTONS_Y = 1
+# Constant for width.
+BUTTONS_X_SIZE = 2
+# Constant for height.
+BUTTONS_Y_SIZE = 3
+# Constant for text content.
+BUTTONS_TEXT = 4
+# Constant for button colour.
+BUTTONS_COLOUR = 5
+# Constant for GUI surface button object.
+BUTTONS_BUTTON_OBJECT = 6
 
 
-class Card:
+class Card:#
     """Template for a card, store all required information."""
 
     def __init__(self, number: int, colour: str, function) -> None:
@@ -311,38 +332,69 @@ def verify_deal(user: Player, computer: Player):
             computer.hand = []
 
 
-def draw_text(text, font, x, y):
-    """Takes in text, a font, and coordinates, and outputs onto screen."""
-    img = font.render(text, True, (0, 0, 0))
-    screen.blit(img, (x, y))
+def draw_text(text):
+    """Takes in text, a font, and coordinates, and outputs."""
+    return text_font.render(text, True, (0, 0, 0))
+
+
+def button_click(mouse_x, mouse_y, buttons):
+    """Checks where mouse is, using list checks which button has been clicked."""
+    # Runs through each button in the list.
+    for button in buttons:
+        # Checks if its coordinates match the mouse.
+        if button[BUTTONS_X] <= mouse_x <= button[BUTTONS_X] + BUTTONS_X_SIZE and button[
+            BUTTONS_Y] <= mouse_y <= button[BUTTONS_Y] + button[BUTTONS_Y_SIZE]:
+            # Coordinates match, so returns button.
+            return button
 
 
 # Starts game.
 # game()
 
+# Now button lists are created and added to button list.
+test_button = [200, 200, 200, 50, "Button", RED]
+buttons.append(test_button)
+# Creates constant for accessing each button.
+BUTTONS_TEST_BUTTON = 0
+# Now puts each button on the screen.
+for button in buttons:
+    # Starts by making a surface with the x and y sizes.
+    # Saves the surface to the list.
+    button.append(pygame.Surface((button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE])))
+    # Fills it with the required colour.
+    button[BUTTONS_BUTTON_OBJECT].fill(button[BUTTONS_COLOUR])
+    # Adds text.
+    button[BUTTONS_BUTTON_OBJECT].blit(
+        draw_text(button[BUTTONS_TEXT]), (BUTTON_TEXT_X, BUTTON_TEXT_Y))
+    # Finally adds button to screen.
+    screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
 # Font test.
-draw_text("Test 123", text_font, 300, 250)
+screen.blit(draw_text("Test 123"), (300, 250))
 # Shapes for testing.
 pygame.draw.rect(screen, RED, [200, 300, 100, 50])
 pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
 pygame.draw.rect(screen, RED, [0, 0, 100, 100])
-# Creates buttons for user to click.
-button_test = pygame.Surface((200, 50))
-button_test.fill((0, 0, 255))
-button_test.blit(text_font.render("Button", True, (0, 0, 0)), (5, 5))
-screen.blit(button_test, (200, 200))
 # Loads in images.
 test_image = pygame.image.load("test.png")
 # Creates card visuals.
+# Variable to continue running loop.
 running = True
+# Loop to run programme.
+# Checks user input and respnds.
 while running:
+    # Updates display every loop.
     pygame.display.update()
-    for event in pygame.event.get():  
+    # Checks for new events.
+    for event in pygame.event.get():
+        # If the game has been told to quit then exits loop.  
         if event.type == pygame.QUIT:  
             running = False
+        # If the user has clicked.
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Gets position of their mouse.
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            if (
-                200 <= mouse_x <= 200 + 200
-                and 200 <= mouse_y <= 200 + 50):
+            # Then checks what they've clicked.
+            button_clicked = button_click(mouse_x, mouse_y, buttons)
+            # Checks that against the list and responds.
+            if buttons.index(button) == BUTTONS_TEST_BUTTON:
                 screen.blit(test_image, (0, 0))
