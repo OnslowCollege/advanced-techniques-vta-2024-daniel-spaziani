@@ -18,8 +18,8 @@ DARK_GREEN = (0,100,0)
 RED = (255,0,0)
 WHITE = (255,255,255)
 # Screen size constants.
-SCREEN_WIDTH = 720
-SCREEN_HEIGHT = 576
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 # Starts pygame.
 pygame.init()
 pygame.display.init()
@@ -49,9 +49,19 @@ BUTTONS_TEXT = 4
 BUTTONS_COLOUR = 5
 # Constant for GUI surface button object.
 BUTTONS_BUTTON_OBJECT = 6
+# Creates constant for accessing each card.
+CARD_1_INDEX = 0
+CARD_2_INDEX = 1
+CARD_3_INDEX = 2
+CARD_4_INDEX = 3
+CARD_5_INDEX = 4
+CARD_6_INDEX = 5
+CARD_7_INDEX = 6
+# Creates the pile for cards being played.
+play_pile = []
 
 
-class Card:#
+class Card:
     """Template for a card, store all required information."""
 
     def __init__(self, number: int, colour: str, function) -> None:
@@ -141,15 +151,9 @@ class Player:
                 # Then adds card to hand.
                 self.hand.append(card_to_add)
 
-    def move(self, card_placed_on) -> None:
+    def move(self, user_card, card_placed_on) -> bool:
         """Lets player make their move, and runs card change function."""
-        # Sets up valid variable which is used to validate the move.
-        valid = False
-        # Repeats until a valid move is attained.
-        while valid is False:
-            # Asks player which card to choose.
-            # Runs function on card chosen, to work out correct move.
-            card.calculate_change(card_placed_on, self)
+        return user_card.calculate_change(card_placed_on, self)
 
 
 # Constant for deck of cards, with card items to create deck list to pick from.
@@ -270,34 +274,6 @@ DECK: list[Card] = [
 ]
 
 
-def game():
-    """Do main game function."""
-    # Creates the pile for cards being played.
-    play_pile = []
-    # Creates user instance of Player.
-    user = Player()
-    # TODO: DELETE THIS, ONLY FOR DEBUGGING.
-    computer = Player()
-    # Asks user who they want to face, validates, and then selects opponent.
-    # Starts by dealing cards to both the user and the other player.
-    # # Gets seven random cards from the deck, and gives them to each player.
-    # Ensures there are no double ups, and that cards are all unique.
-    verify_deal(user, computer)
-    # Then starts game.
-    # Creates variable to check whether or not the game should keep running.
-    game_running = True
-    # Repeats until one of the players has no cards left in their hand.
-    while game_running is True:
-        # Asks user for input, checks it, and makes the move.
-        user.move()
-        # Generates the computer's move.
-        generate_move(computer)
-        # Checks if either of the hands are empty and if so ends the game.
-        if user.hand == [] or computer.hand == []:
-            game_running = False
-    # TODO: Win Message
-
-
 def verify_deal(user: Player, computer: Player):
     """Ensure that the player and the computer don't have the same cards."""
     # Starts assuming hand won't need to be reshuffled, unless proven.
@@ -342,20 +318,42 @@ def button_click(mouse_x, mouse_y, buttons):
     # Runs through each button in the list.
     for button in buttons:
         # Checks if its coordinates match the mouse.
-        if button[BUTTONS_X] <= mouse_x <= button[BUTTONS_X] + BUTTONS_X_SIZE and button[
+        if button[BUTTONS_X] <= mouse_x <= button[BUTTONS_X] + button[BUTTONS_X_SIZE] and button[
             BUTTONS_Y] <= mouse_y <= button[BUTTONS_Y] + button[BUTTONS_Y_SIZE]:
-            # Coordinates match, so returns button.
+            # Coordinates match, so returns button.A
             return button
 
 
-# Starts game.
-# game()
-
+# Game setup.
+# Creates user instance of Player.
+user = Player()
+# TODO: DELETE THIS, ONLY FOR DEBUGGING.
+computer = Player()
+# Asks user who they want to face, validates, and then selects opponent.
+# Starts by dealing cards to both the user and the other player.
+# Gets seven random cards from the deck, and gives them to each player.
+# Ensures there are no double ups, and that cards are all unique.
+verify_deal(user, computer)
+# Now gets random card from deck and puts it into play pile to start.
+play_pile.append(DECK[randint(0, len(DECK) - 1)])
 # Now button lists are created and added to button list.
-test_button = [200, 200, 200, 50, "Button", RED]
-buttons.append(test_button)
-# Creates constant for accessing each button.
-BUTTONS_TEST_BUTTON = 0
+# test_button = [0, 0, 200, 50, "Button", RED]
+# buttons.append(test_button)
+# BUTTONS_TEST_BUTTON = 0
+card_1_button = [285, 750, 150, 250, "Card 1", RED]
+buttons.append(card_1_button)
+card_2_button = [485, 750, 150, 250, "Card 2", RED]
+buttons.append(card_2_button)
+card_3_button = [685, 750, 150, 250, "Card 3", RED]
+buttons.append(card_3_button)
+card_4_button = [885, 750, 150, 250, "Card 4", RED]
+buttons.append(card_4_button)
+card_5_button = [1085, 750, 150, 250, "Card 5", RED]
+buttons.append(card_5_button)
+card_6_button = [1285, 750, 150, 250, "Card 6", RED]
+buttons.append(card_6_button)
+card_7_button = [1485, 750, 150, 250, "Card 7", RED]
+buttons.append(card_7_button)
 # Now puts each button on the screen.
 for button in buttons:
     # Starts by making a surface with the x and y sizes.
@@ -369,24 +367,32 @@ for button in buttons:
     # Finally adds button to screen.
     screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
 # Font test.
-screen.blit(draw_text("Test 123"), (300, 250))
+# screen.blit(draw_text("Test 123"), (300, 250))
 # Shapes for testing.
-pygame.draw.rect(screen, RED, [200, 300, 100, 50])
-pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
-pygame.draw.rect(screen, RED, [0, 0, 100, 100])
+# pygame.draw.rect(screen, RED, [200, 300, 100, 50])
+# pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
+# pygame.draw.rect(screen, RED, [0, 0, 100, 100])
 # Loads in images.
 test_image = pygame.image.load("test.png")
 # Creates card visuals.
 # Variable to continue running loop.
 running = True
+# Variable to store number of moves in.
+moves_made = 0
 # Loop to run programme.
-# Checks user input and respnds.
+# Checks user input and responds.
 while running:
+    # Adds to the number of moves made.
+    moves_made += 1
     # Updates display every loop.
     pygame.display.update()
+    # Checks if either of the hands are empty and if so ends the game.
+    if user.hand == [] or computer.hand == []:
+        # TODO: Win Message
+        pass
     # Checks for new events.
     for event in pygame.event.get():
-        # If the game has been told to quit then exits loop.  
+        # If the game has been told to quit then exits loop.
         if event.type == pygame.QUIT:  
             running = False
         # If the user has clicked.
@@ -395,6 +401,20 @@ while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             # Then checks what they've clicked.
             button_clicked = button_click(mouse_x, mouse_y, buttons)
-            # Checks that against the list and responds.
-            if buttons.index(button) == BUTTONS_TEST_BUTTON:
-                screen.blit(test_image, (0, 0))
+            # Checks if there was an actual button clicked.
+            if button_clicked != None:
+                # Checks that against the list and responds.
+                # Depending on which button is pushed, runs appropriate code.
+                # if buttons.index(button_clicked) == BUTTONS_TEST_BUTTON:
+                    # print("Test Button")
+                    # screen.blit(test_image, (0, 0))
+                # Gets the card associated with the index the user selected.
+                chosen_card = user.hand[buttons.index(button_clicked)]
+                # Checks user choice, and makes the move.
+                valid = user.move(chosen_card, play_pile[-1])
+                if valid == True:
+                    # Now continues with the turn.
+                    moves_made += 1
+                    computer.generate_card()
+            else:
+                print("No button pressed.")
