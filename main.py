@@ -382,14 +382,21 @@ moves_made = 0
 # Loop to run programme.
 # Checks user input and responds.
 while running:
-    # Adds to the number of moves made.
-    moves_made += 1
+    # Adds the top card of the play pile to the GUI.
+    pygame.draw.rect(screen, RED, [885, 350, 150, 250])
+    screen.blit(draw_text(
+        f"{play_pile[-1].number}, {play_pile[-1].colour}, {play_pile[-1].function}"), (885, 350))
     # Updates display every loop.
     pygame.display.update()
     # Checks if either of the hands are empty and if so ends the game.
-    if user.hand == [] or computer.hand == []:
-        # TODO: Win Message
-        pass
+    if user.hand == []:
+        # Tells the user they won if their hand is empty first.
+        print("You won!")
+        running = False
+    elif computer.hand == []:
+        # If computer won then tells user they lost.
+        print("You lost")
+        running = False
     # Checks for new events.
     for event in pygame.event.get():
         # If the game has been told to quit then exits loop.
