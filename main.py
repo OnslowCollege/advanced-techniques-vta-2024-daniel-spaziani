@@ -59,18 +59,54 @@ CARD_6_INDEX = 5
 CARD_7_INDEX = 6
 # Creates the pile for cards being played.
 play_pile = []
+# Loads in images.
+card_back = pygame.image.load("card_back.png")
+# Loads all sets of images into lists by number.
+# Starts by making constant for number of numbered cards in a set.
+NUMBERED_CARD_SET = 10
+# Creates blank lists for cards.
+blue_images = []
+red_images = []
+green_images = []
+yellow_images = []
+# Now uses constant to iterate through numbered cards and load them.
+for card_number in range(NUMBERED_CARD_SET):
+    blue_images.append(pygame.image.load(f"blue_{card_number}.png"))
+    red_images.append(pygame.image.load(f"red_{card_number}.png"))
+    green_images.append(pygame.image.load(f"green_{card_number}.png"))
+    yellow_images.append(pygame.image.load(f"yellow_{card_number}.png"))
+# Now loads special cards.
+# Pickup two cards.
+blue_picker = pygame.image.load("blue_picker.png")
+red_picker = pygame.image.load("red_picker.png")
+green_picker = pygame.image.load("green_picker.png")
+yellow_picker = pygame.image.load("yellow_picker.png")
+# Reverse cards.
+blue_reverse = pygame.image.load("blue_reverse.png")
+red_reverse = pygame.image.load("red_reverse.png")
+green_reverse = pygame.image.load("green_reverse.png")
+yellow_reverse = pygame.image.load("yellow_reverse.png")
+# Skip cards.
+blue_skip = pygame.image.load("blue_skip.png")
+red_skip = pygame.image.load("red_skip.png")
+green_skip = pygame.image.load("green_skip.png")
+yellow_skip = pygame.image.load("yellow_skip.png")
+# Wildcard and pickup four.
+wildcard = pygame.image.load("wild_colour_changer.png")
+pickup_four = pygame.image.load("wild_pick_four.png")
 
 
 class Card:
     """Template for a card, store all required information."""
 
-    def __init__(self, number: int, colour: str, function) -> None:
+    def __init__(self, number: int, colour: str, function, display) -> None:
         """
         Save all info to function.
 
         number - the card's numerical number, not read if not a normal card.
         colour - red, green, blue, or yellow.
         function - says what kind of special card it is.
+        display - stores display object for the card.
         """
         self.number = int(number)
         self.colour = colour
@@ -82,6 +118,7 @@ class Card:
         # "reverse" - flips direction of play.
         # "wildcard" - allows placer to change colour to whatever they want.
         self.function = function
+        self.display = display
 
     def calculate_change(self, card_placed_on, player_who_placed) -> bool:
         """Based on cards, calculate validity and what values to change."""
@@ -159,118 +196,118 @@ class Player:
 # Constant for deck of cards, with card items to create deck list to pick from.
 DECK: list[Card] = [
     # Red card set.
-    Card(0, "red", "normal"),
-    Card(1, "red", "normal"),
-    Card(1, "red", "normal"),
-    Card(2, "red", "normal"),
-    Card(2, "red", "normal"),
-    Card(3, "red", "normal"),
-    Card(3, "red", "normal"),
-    Card(4, "red", "normal"),
-    Card(4, "red", "normal"),
-    Card(5, "red", "normal"),
-    Card(5, "red", "normal"),
-    Card(6, "red", "normal"),
-    Card(6, "red", "normal"),
-    Card(7, "red", "normal"),
-    Card(7, "red", "normal"),
-    Card(8, "red", "normal"),
-    Card(8, "red", "normal"),
-    Card(9, "red", "normal"),
-    Card(9, "red", "normal"),
-    Card(0, "red", "skip"),
-    Card(0, "red", "skip"),
-    Card(0, "red", "reverse"),
-    Card(0, "red", "reverse"),
-    Card(0, "red", "pickup two"),
-    Card(0, "red", "pickup two"),
+    Card(0, "red", "normal", red_images[0]),
+    Card(1, "red", "normal", red_images[1]),
+    Card(1, "red", "normal", red_images[1]),
+    Card(2, "red", "normal", red_images[2]),
+    Card(2, "red", "normal", red_images[2]),
+    Card(3, "red", "normal", red_images[3]),
+    Card(3, "red", "normal", red_images[3]),
+    Card(4, "red", "normal", red_images[4]),
+    Card(4, "red", "normal", red_images[4]),
+    Card(5, "red", "normal", red_images[5]),
+    Card(5, "red", "normal", red_images[5]),
+    Card(6, "red", "normal", red_images[6]),
+    Card(6, "red", "normal", red_images[6]),
+    Card(7, "red", "normal", red_images[7]),
+    Card(7, "red", "normal", red_images[7]),
+    Card(8, "red", "normal", red_images[8]),
+    Card(8, "red", "normal", red_images[8]),
+    Card(9, "red", "normal", red_images[9]),
+    Card(9, "red", "normal", red_images[9]),
+    Card(0, "red", "skip", red_skip),
+    Card(0, "red", "skip", red_skip),
+    Card(0, "red", "reverse", red_reverse),
+    Card(0, "red", "reverse", red_reverse),
+    Card(0, "red", "pickup two", red_picker),
+    Card(0, "red", "pickup two", red_picker),
     # Yellow card set.
-    Card(0, "yellow", "normal"),
-    Card(1, "yellow", "normal"),
-    Card(1, "yellow", "normal"),
-    Card(2, "yellow", "normal"),
-    Card(2, "yellow", "normal"),
-    Card(3, "yellow", "normal"),
-    Card(3, "yellow", "normal"),
-    Card(4, "yellow", "normal"),
-    Card(4, "yellow", "normal"),
-    Card(5, "yellow", "normal"),
-    Card(5, "yellow", "normal"),
-    Card(6, "yellow", "normal"),
-    Card(6, "yellow", "normal"),
-    Card(7, "yellow", "normal"),
-    Card(7, "yellow", "normal"),
-    Card(8, "yellow", "normal"),
-    Card(8, "yellow", "normal"),
-    Card(9, "yellow", "normal"),
-    Card(9, "yellow", "normal"),
-    Card(0, "yellow", "skip"),
-    Card(0, "yellow", "skip"),
-    Card(0, "yellow", "reverse"),
-    Card(0, "yellow", "reverse"),
-    Card(0, "yellow", "pickup two"),
-    Card(0, "yellow", "pickup two"),
+    Card(0, "yellow", "normal", yellow_images[0]),
+    Card(1, "yellow", "normal", yellow_images[1]),
+    Card(1, "yellow", "normal", yellow_images[1]),
+    Card(2, "yellow", "normal", yellow_images[2]),
+    Card(2, "yellow", "normal", yellow_images[2]),
+    Card(3, "yellow", "normal", yellow_images[3]),
+    Card(3, "yellow", "normal", yellow_images[3]),
+    Card(4, "yellow", "normal", yellow_images[4]),
+    Card(4, "yellow", "normal", yellow_images[4]),
+    Card(5, "yellow", "normal", yellow_images[5]),
+    Card(5, "yellow", "normal", yellow_images[5]),
+    Card(6, "yellow", "normal", yellow_images[6]),
+    Card(6, "yellow", "normal", yellow_images[6]),
+    Card(7, "yellow", "normal", yellow_images[7]),
+    Card(7, "yellow", "normal", yellow_images[7]),
+    Card(8, "yellow", "normal", yellow_images[8]),
+    Card(8, "yellow", "normal", yellow_images[8]),
+    Card(9, "yellow", "normal", yellow_images[9]),
+    Card(9, "yellow", "normal", yellow_images[9]),
+    Card(0, "yellow", "skip", yellow_skip),
+    Card(0, "yellow", "skip", yellow_skip),
+    Card(0, "yellow", "reverse", yellow_reverse),
+    Card(0, "yellow", "reverse", yellow_reverse),
+    Card(0, "yellow", "pickup two", yellow_picker),
+    Card(0, "yellow", "pickup two", yellow_picker),
     # Green card set.
-    Card(0, "green", "normal"),
-    Card(1, "green", "normal"),
-    Card(1, "green", "normal"),
-    Card(2, "green", "normal"),
-    Card(2, "green", "normal"),
-    Card(3, "green", "normal"),
-    Card(3, "green", "normal"),
-    Card(4, "green", "normal"),
-    Card(4, "green", "normal"),
-    Card(5, "green", "normal"),
-    Card(5, "green", "normal"),
-    Card(6, "green", "normal"),
-    Card(6, "green", "normal"),
-    Card(7, "green", "normal"),
-    Card(7, "green", "normal"),
-    Card(8, "green", "normal"),
-    Card(8, "green", "normal"),
-    Card(9, "green", "normal"),
-    Card(9, "green", "normal"),
-    Card(0, "green", "skip"),
-    Card(0, "green", "skip"),
-    Card(0, "green", "reverse"),
-    Card(0, "green", "reverse"),
-    Card(0, "green", "pickup two"),
-    Card(0, "green", "pickup two"),
+    Card(0, "green", "normal", green_images[0]),
+    Card(1, "green", "normal", green_images[1]),
+    Card(1, "green", "normal", green_images[1]),
+    Card(2, "green", "normal", green_images[2]),
+    Card(2, "green", "normal", green_images[2]),
+    Card(3, "green", "normal", green_images[3]),
+    Card(3, "green", "normal", green_images[3]),
+    Card(4, "green", "normal", green_images[4]),
+    Card(4, "green", "normal", green_images[4]),
+    Card(5, "green", "normal", green_images[5]),
+    Card(5, "green", "normal", green_images[5]),
+    Card(6, "green", "normal", green_images[6]),
+    Card(6, "green", "normal", green_images[6]),
+    Card(7, "green", "normal", green_images[7]),
+    Card(7, "green", "normal", green_images[7]),
+    Card(8, "green", "normal", green_images[8]),
+    Card(8, "green", "normal", green_images[8]),
+    Card(9, "green", "normal", green_images[9]),
+    Card(9, "green", "normal", green_images[9]),
+    Card(0, "green", "skip", green_skip),
+    Card(0, "green", "skip", green_skip),
+    Card(0, "green", "reverse", green_reverse),
+    Card(0, "green", "reverse", green_reverse),
+    Card(0, "green", "pickup two", green_picker),
+    Card(0, "green", "pickup two", green_picker),
     # Blue card set.
-    Card(0, "blue", "normal"),
-    Card(1, "blue", "normal"),
-    Card(1, "blue", "normal"),
-    Card(2, "blue", "normal"),
-    Card(2, "blue", "normal"),
-    Card(3, "blue", "normal"),
-    Card(3, "blue", "normal"),
-    Card(4, "blue", "normal"),
-    Card(4, "blue", "normal"),
-    Card(5, "blue", "normal"),
-    Card(5, "blue", "normal"),
-    Card(6, "blue", "normal"),
-    Card(6, "blue", "normal"),
-    Card(7, "blue", "normal"),
-    Card(7, "blue", "normal"),
-    Card(8, "blue", "normal"),
-    Card(8, "blue", "normal"),
-    Card(9, "blue", "normal"),
-    Card(9, "blue", "normal"),
-    Card(0, "blue", "skip"),
-    Card(0, "blue", "skip"),
-    Card(0, "blue", "reverse"),
-    Card(0, "blue", "reverse"),
-    Card(0, "blue", "pickup two"),
-    Card(0, "blue", "pickup two"),
+    Card(0, "blue", "normal", blue_images[0]),
+    Card(1, "blue", "normal", blue_images[1]),
+    Card(1, "blue", "normal", blue_images[1]),
+    Card(2, "blue", "normal", blue_images[2]),
+    Card(2, "blue", "normal", blue_images[2]),
+    Card(3, "blue", "normal", blue_images[3]),
+    Card(3, "blue", "normal", blue_images[3]),
+    Card(4, "blue", "normal", blue_images[4]),
+    Card(4, "blue", "normal", blue_images[4]),
+    Card(5, "blue", "normal", blue_images[5]),
+    Card(5, "blue", "normal", blue_images[5]),
+    Card(6, "blue", "normal", blue_images[6]),
+    Card(6, "blue", "normal", blue_images[6]),
+    Card(7, "blue", "normal", blue_images[7]),
+    Card(7, "blue", "normal", blue_images[7]),
+    Card(8, "blue", "normal", blue_images[8]),
+    Card(8, "blue", "normal", blue_images[8]),
+    Card(9, "blue", "normal", blue_images[9]),
+    Card(9, "blue", "normal", blue_images[9]),
+    Card(0, "blue", "skip", blue_skip),
+    Card(0, "blue", "skip", blue_skip),
+    Card(0, "blue", "reverse", blue_reverse),
+    Card(0, "blue", "reverse", blue_reverse),
+    Card(0, "blue", "pickup two", blue_picker),
+    Card(0, "blue", "pickup two", blue_picker),
     # Special Cards.
-    Card(0, "none", "wildcard"),
-    Card(0, "none", "wildcard"),
-    Card(0, "none", "wildcard"),
-    Card(0, "none", "wildcard"),
-    Card(0, "none", "pickup four"),
-    Card(0, "none", "pickup four"),
-    Card(0, "none", "pickup four"),
-    Card(0, "none", "pickup four"),
+    Card(0, "none", "wildcard", wildcard),
+    Card(0, "none", "wildcard", wildcard),
+    Card(0, "none", "wildcard", wildcard),
+    Card(0, "none", "wildcard", wildcard),
+    Card(0, "none", "pickup four", pickup_four),
+    Card(0, "none", "pickup four", pickup_four),
+    Card(0, "none", "pickup four", pickup_four),
+    Card(0, "none", "pickup four", pickup_four)
 ]
 
 
@@ -340,19 +377,19 @@ play_pile.append(DECK[randint(0, len(DECK) - 1)])
 # test_button = [0, 0, 200, 50, "Button", RED]
 # buttons.append(test_button)
 # BUTTONS_TEST_BUTTON = 0
-card_1_button = [285, 750, 150, 250, "Card 1", RED]
+card_1_button = [285, 750, 130, 182, "Card 1", RED]
 buttons.append(card_1_button)
-card_2_button = [485, 750, 150, 250, "Card 2", RED]
+card_2_button = [485, 750, 130, 182, "Card 2", RED]
 buttons.append(card_2_button)
-card_3_button = [685, 750, 150, 250, "Card 3", RED]
+card_3_button = [685, 750, 130, 182, "Card 3", RED]
 buttons.append(card_3_button)
-card_4_button = [885, 750, 150, 250, "Card 4", RED]
+card_4_button = [885, 750, 130, 182, "Card 4", RED]
 buttons.append(card_4_button)
-card_5_button = [1085, 750, 150, 250, "Card 5", RED]
+card_5_button = [1085, 750, 130, 182, "Card 5", RED]
 buttons.append(card_5_button)
-card_6_button = [1285, 750, 150, 250, "Card 6", RED]
+card_6_button = [1285, 750, 130, 182, "Card 6", RED]
 buttons.append(card_6_button)
-card_7_button = [1485, 750, 150, 250, "Card 7", RED]
+card_7_button = [1485, 750, 130, 182, "Card 7", RED]
 buttons.append(card_7_button)
 # Now puts each button on the screen.
 for button in buttons:
@@ -372,8 +409,6 @@ for button in buttons:
 # pygame.draw.rect(screen, RED, [200, 300, 100, 50])
 # pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
 # pygame.draw.rect(screen, RED, [0, 0, 100, 100])
-# Loads in images.
-test_image = pygame.image.load("test.png")
 # Creates card visuals.
 # Variable to continue running loop.
 running = True
@@ -383,7 +418,7 @@ moves_made = 0
 # Checks user input and responds.
 while running:
     # Adds the top card of the play pile to the GUI.
-    pygame.draw.rect(screen, RED, [885, 350, 150, 250])
+    pygame.draw.rect(screen, RED, [885, 350, 130, 182])
     screen.blit(draw_text(
         f"{play_pile[-1].number}, {play_pile[-1].colour}, {play_pile[-1].function}"), (885, 350))
     # Updates display every loop.
