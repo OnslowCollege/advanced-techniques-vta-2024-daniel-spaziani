@@ -162,7 +162,7 @@ class Card:
                 # The next player must pick up four.
                 # TODO: FINISH THIS ONCE LOGIC DONE.
             # Then can remove it from the player's hand.
-            player_who_placed.hand.pop(self)
+            player_who_placed.hand.pop(player_who_placed.hand.index(self))
         return valid
 
 
@@ -357,7 +357,7 @@ def button_click(mouse_x, mouse_y, buttons):
         # Checks if its coordinates match the mouse.
         if button[BUTTONS_X] <= mouse_x <= button[BUTTONS_X] + button[BUTTONS_X_SIZE] and button[
             BUTTONS_Y] <= mouse_y <= button[BUTTONS_Y] + button[BUTTONS_Y_SIZE]:
-            # Coordinates match, so returns button.A
+            # Coordinates match, so returns button.
             return button
 
 
@@ -377,19 +377,19 @@ play_pile.append(DECK[randint(0, len(DECK) - 1)])
 # test_button = [0, 0, 200, 50, "Button", RED]
 # buttons.append(test_button)
 # BUTTONS_TEST_BUTTON = 0
-card_1_button = [285, 750, 130, 182, "Card 1", RED]
+card_1_button = [285, 750, 130, 182, "Card 1", LIGHT_GREEN]
 buttons.append(card_1_button)
-card_2_button = [485, 750, 130, 182, "Card 2", RED]
+card_2_button = [485, 750, 130, 182, "Card 2", LIGHT_GREEN]
 buttons.append(card_2_button)
-card_3_button = [685, 750, 130, 182, "Card 3", RED]
+card_3_button = [685, 750, 130, 182, "Card 3", LIGHT_GREEN]
 buttons.append(card_3_button)
-card_4_button = [885, 750, 130, 182, "Card 4", RED]
+card_4_button = [885, 750, 130, 182, "Card 4", LIGHT_GREEN]
 buttons.append(card_4_button)
-card_5_button = [1085, 750, 130, 182, "Card 5", RED]
+card_5_button = [1085, 750, 130, 182, "Card 5", LIGHT_GREEN]
 buttons.append(card_5_button)
-card_6_button = [1285, 750, 130, 182, "Card 6", RED]
+card_6_button = [1285, 750, 130, 182, "Card 6", LIGHT_GREEN]
 buttons.append(card_6_button)
-card_7_button = [1485, 750, 130, 182, "Card 7", RED]
+card_7_button = [1485, 750, 130, 182, "Card 7", LIGHT_GREEN]
 buttons.append(card_7_button)
 # Now puts each button on the screen.
 for button in buttons:
@@ -398,9 +398,8 @@ for button in buttons:
     button.append(pygame.Surface((button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE])))
     # Fills it with the required colour.
     button[BUTTONS_BUTTON_OBJECT].fill(button[BUTTONS_COLOUR])
-    # Adds text.
-    button[BUTTONS_BUTTON_OBJECT].blit(
-        draw_text(button[BUTTONS_TEXT]), (BUTTON_TEXT_X, BUTTON_TEXT_Y))
+    # Adds card image.
+    button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
     # Finally adds button to screen.
     screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
 # Font test.
@@ -418,9 +417,8 @@ moves_made = 0
 # Checks user input and responds.
 while running:
     # Adds the top card of the play pile to the GUI.
-    pygame.draw.rect(screen, RED, [885, 350, 130, 182])
-    screen.blit(draw_text(
-        f"{play_pile[-1].number}, {play_pile[-1].colour}, {play_pile[-1].function}"), (885, 350))
+    pygame.draw.rect(screen, LIGHT_GREEN, [885, 350, 130, 182])
+    screen.blit(play_pile[-1].display, (885, 350))
     # Updates display every loop.
     pygame.display.update()
     # Checks if either of the hands are empty and if so ends the game.
@@ -454,9 +452,23 @@ while running:
                 chosen_card = user.hand[buttons.index(button_clicked)]
                 # Checks user choice, and makes the move.
                 valid = user.move(chosen_card, play_pile[-1])
-                if valid == True:
+                if valid is True:
                     # Now continues with the turn.
                     moves_made += 1
-                    computer.generate_card()
+                    # Now regenerates user hand GUI.
+                    for button in buttons:
+                        try:
+                            screen.blit(
+                                user.hand[buttons.index(button)].display,
+                                (button[BUTTONS_X], button[BUTTONS_Y]))
+                        except IndexError:
+                            # If the hand has less cards then doesn't draw that card.
+                            pygame.draw.rect(screen, LIGHT_GREEN, [
+                                button[BUTTONS_X], button[BUTTONS_Y],
+                                button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
+                    # computer.generate_card()
+                    print(moves_made)
+                else:
+                    print("Invalid move.")
             else:
                 print("No button pressed.")
