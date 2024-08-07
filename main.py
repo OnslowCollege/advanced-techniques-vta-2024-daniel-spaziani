@@ -20,6 +20,8 @@ WHITE = (255,255,255)
 # Screen size constants.
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
+# Variable to hold special card functions for each turn.
+functions = []
 # Starts pygame.
 pygame.init()
 pygame.display.init()
@@ -127,40 +129,22 @@ class Card:
             self.colour != card_placed_on.colour
             and self.number != card_placed_on.number
         ):
-            # If neither attribute matches, then it's not valid.
-            valid = False
+            # Then has to check if the card is a wildcard of some description.
+            if self.function == "wildcard" or self.function == "pickup four":
+                # If it is then it immediately becomes valid.
+                valid = True
+            else:
+                # If neither attribute matches, then it's not valid.
+                valid = False
         else:
             # Else it is valid.
             valid = True
         if valid is True:
             # The programme now knows that the move is valid.
-            # Now works out what exact operation to make.
-            if self.function == "normal":
-                # It's a normal card, so it can just add it to pile.
-                play_pile.append(self)
-            # Then checks if it's a specific purpose card, and checks its use.
-            elif self.function == "skip":
-                pass
-                # The next turn must be skipped.
-                # TODO: FINISH THIS ONCE LOGIC DONE.
-            # If it's a colour change card, then passes that on.
-            elif self.function == "wildcard":
-                pass
-                # The player can now change the colour..
-                # TODO: FINISH THIS ONCE LOGIC DONE.
-            # Else if it's a plus two or four card, then passes on that value.
-            elif self.function == "reverse":
-                pass
-                # Reverse the direction of play, giving user another turn.
-                # TODO: FINISH THIS ONCE LOGIC DONE.
-            elif self.function == "pickup two":
-                pass
-                # Next player must pick up two.
-                # TODO: FINISH THIS ONCE LOGIC DONE.
-            elif self.function == "pickup four":
-                pass
-                # The next player must pick up four.
-                # TODO: FINISH THIS ONCE LOGIC DONE.
+            # Now appends the function to the list.
+            functions.append(self.function)
+            # Adds card to play pile since it's been played.
+            play_pile.append(self)
             # Then can remove it from the player's hand.
             player_who_placed.hand.pop(player_who_placed.hand.index(self))
         return valid
@@ -466,6 +450,16 @@ while running:
                             pygame.draw.rect(screen, LIGHT_GREEN, [
                                 button[BUTTONS_X], button[BUTTONS_Y],
                                 button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
+                    # Now checks whether the player put down a special card.
+                    # If they put down a wildcard then changes the colour to selected one.
+                    if chosen_card.function == "wildcard":
+                        # Asks user which colour they want to change wildcard to.
+                        # TODO: THIS.
+                        wildcard_colour_choice = "foo"
+                        # Updates its colour to the colour user asked for.
+                        chosen_card.colour = wildcard_colour_choice
+                    # If they put down a pickup two or four then makes computer pick up.
+                    # If they put down a reverse or skip then switches the turn back to player.
                     # computer.generate_card()
                     print(moves_made)
                 else:
