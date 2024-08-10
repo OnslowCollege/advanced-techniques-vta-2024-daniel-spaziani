@@ -206,12 +206,12 @@ DECK: list[Card] = [
     Card(8, "red", "normal", red_images[8]),
     Card(9, "red", "normal", red_images[9]),
     Card(9, "red", "normal", red_images[9]),
-    Card(0, "red", "skip", red_skip),
-    Card(0, "red", "skip", red_skip),
-    Card(0, "red", "reverse", red_reverse),
-    Card(0, "red", "reverse", red_reverse),
-    Card(0, "red", "pickup two", red_picker),
-    Card(0, "red", "pickup two", red_picker),
+    Card(-1, "red", "skip", red_skip),
+    Card(-1, "red", "skip", red_skip),
+    Card(-2, "red", "reverse", red_reverse),
+    Card(-2, "red", "reverse", red_reverse),
+    Card(-3, "red", "pickup two", red_picker),
+    Card(-3, "red", "pickup two", red_picker),
     # Yellow card set.
     Card(0, "yellow", "normal", yellow_images[0]),
     Card(1, "yellow", "normal", yellow_images[1]),
@@ -232,12 +232,12 @@ DECK: list[Card] = [
     Card(8, "yellow", "normal", yellow_images[8]),
     Card(9, "yellow", "normal", yellow_images[9]),
     Card(9, "yellow", "normal", yellow_images[9]),
-    Card(0, "yellow", "skip", yellow_skip),
-    Card(0, "yellow", "skip", yellow_skip),
-    Card(0, "yellow", "reverse", yellow_reverse),
-    Card(0, "yellow", "reverse", yellow_reverse),
-    Card(0, "yellow", "pickup two", yellow_picker),
-    Card(0, "yellow", "pickup two", yellow_picker),
+    Card(-1, "yellow", "skip", yellow_skip),
+    Card(-1, "yellow", "skip", yellow_skip),
+    Card(-2, "yellow", "reverse", yellow_reverse),
+    Card(-2, "yellow", "reverse", yellow_reverse),
+    Card(-3, "yellow", "pickup two", yellow_picker),
+    Card(-3, "yellow", "pickup two", yellow_picker),
     # Green card set.
     Card(0, "green", "normal", green_images[0]),
     Card(1, "green", "normal", green_images[1]),
@@ -258,12 +258,12 @@ DECK: list[Card] = [
     Card(8, "green", "normal", green_images[8]),
     Card(9, "green", "normal", green_images[9]),
     Card(9, "green", "normal", green_images[9]),
-    Card(0, "green", "skip", green_skip),
-    Card(0, "green", "skip", green_skip),
-    Card(0, "green", "reverse", green_reverse),
-    Card(0, "green", "reverse", green_reverse),
-    Card(0, "green", "pickup two", green_picker),
-    Card(0, "green", "pickup two", green_picker),
+    Card(-1, "green", "skip", green_skip),
+    Card(-1, "green", "skip", green_skip),
+    Card(-2, "green", "reverse", green_reverse),
+    Card(-2, "green", "reverse", green_reverse),
+    Card(-3, "green", "pickup two", green_picker),
+    Card(-3, "green", "pickup two", green_picker),
     # Blue card set.
     Card(0, "blue", "normal", blue_images[0]),
     Card(1, "blue", "normal", blue_images[1]),
@@ -284,21 +284,21 @@ DECK: list[Card] = [
     Card(8, "blue", "normal", blue_images[8]),
     Card(9, "blue", "normal", blue_images[9]),
     Card(9, "blue", "normal", blue_images[9]),
-    Card(0, "blue", "skip", blue_skip),
-    Card(0, "blue", "skip", blue_skip),
-    Card(0, "blue", "reverse", blue_reverse),
-    Card(0, "blue", "reverse", blue_reverse),
-    Card(0, "blue", "pickup two", blue_picker),
-    Card(0, "blue", "pickup two", blue_picker),
+    Card(-1, "blue", "skip", blue_skip),
+    Card(-1, "blue", "skip", blue_skip),
+    Card(-2, "blue", "reverse", blue_reverse),
+    Card(-2, "blue", "reverse", blue_reverse),
+    Card(-3, "blue", "pickup two", blue_picker),
+    Card(-3, "blue", "pickup two", blue_picker),
     # Special Cards.
-    Card(0, "none", "wildcard", wildcard),
-    Card(0, "none", "wildcard", wildcard),
-    Card(0, "none", "wildcard", wildcard),
-    Card(0, "none", "wildcard", wildcard),
-    Card(0, "none", "pickup four", pickup_four),
-    Card(0, "none", "pickup four", pickup_four),
-    Card(0, "none", "pickup four", pickup_four),
-    Card(0, "none", "pickup four", pickup_four)
+    Card(-4, "none", "wildcard", wildcard),
+    Card(-4, "none", "wildcard", wildcard),
+    Card(-4, "none", "wildcard", wildcard),
+    Card(-4, "none", "wildcard", wildcard),
+    Card(-4, "none", "pickup four", pickup_four),
+    Card(-4, "none", "pickup four", pickup_four),
+    Card(-4, "none", "pickup four", pickup_four),
+    Card(-4, "none", "pickup four", pickup_four)
 ]
 
 
@@ -395,13 +395,13 @@ for button in buttons:
     screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
 # The buttons are added to a list that can be checked.
 # Creates red button.
-wildcard_colour_buttons.append([1300, 400, 50, 50, "", RED])
+wildcard_colour_buttons.append([1350, 350, 200, 150, "red", RED])
 # Creates green button.
-wildcard_colour_buttons.append([1400, 400, 50, 50, "", DARK_GREEN])
+wildcard_colour_buttons.append([1650, 350, 200, 150, "green", GREEN])
 # Creates blue button.
-wildcard_colour_buttons.append([1300, 600, 50, 50, "", BLUE])
+wildcard_colour_buttons.append([1350, 550, 200, 150, "blue", BLUE])
 # Creates yellow button.
-wildcard_colour_buttons.append([1400, 600, 50, 50, "", YELLOW])
+wildcard_colour_buttons.append([1650, 550, 200, 150, "yellow", YELLOW])
 # Font test.
 # screen.blit(draw_text("Test 123"), (300, 250))
 # Shapes for testing.
@@ -439,53 +439,58 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Gets position of their mouse.
             mouse_x, mouse_y = pygame.mouse.get_pos()
+            # Only runs this bit if there is no wildcard being processed.
             if wildcard_colour_choice == None:
                 # Then checks what they've clicked.
                 button_clicked = button_click(mouse_x, mouse_y, buttons)
                 # Checks if there was an actual button clicked.
-                if button_clicked != None:
-                    # Checks that against the list and responds.
-                    # Depending on which button is pushed, runs appropriate code.
-                    # if buttons.index(button_clicked) == BUTTONS_TEST_BUTTON:
-                        # print("Test Button")
-                        # screen.blit(test_image, (0, 0))
-                    # Gets the card associated with the index the user selected.
-                    chosen_card = user.hand[buttons.index(button_clicked)]
-                    # Checks user choice, and makes the move.
-                    valid = user.move(chosen_card, play_pile[-1])
-                    if valid is True:
-                        # Now continues with the turn.
-                        moves_made += 1
-                        # Now regenerates user hand GUI.
-                        for button in buttons:
-                            try:
-                                screen.blit(
-                                    user.hand[buttons.index(button)].display,
-                                    (button[BUTTONS_X], button[BUTTONS_Y]))
-                            except IndexError:
-                                # If the hand has less cards then doesn't draw that card.
-                                pygame.draw.rect(screen, LIGHT_GREEN, [
-                                    button[BUTTONS_X], button[BUTTONS_Y],
-                                    button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
-                        # Now checks whether the player put down a special card.
-                        # If they put down a wildcard then changes the colour to selected one.
-                        if chosen_card.function == "wildcard" or chosen_card.function == "pickup four":
-                            # Asks user which colour they want to change wildcard to.
-                            # Draws it onscreen.
-                            pygame.draw.rect(screen, RED, [1300, 300, 600, 400])
-                            screen.blit(draw_text("Select the colour to change to:"), (1400, 310))
-                            for button in wildcard_colour_buttons:
-                                surface = pygame.Surface((button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]))
-                                surface.fill(button[BUTTONS_COLOUR])
-                                screen.blit(surface, (button[BUTTONS_X], button[BUTTONS_Y]))
-                            wildcard_colour_choice = "UNDECIDED"
+                if button_clicked is not None:
+                # Checks if that button was related to an actual card.
+                    if buttons.index(button_clicked) < len(user.hand):
+                        # Checks that against the list and responds.
+                        # Depending on which button is pushed, runs appropriate code.
+                        # if buttons.index(button_clicked) == BUTTONS_TEST_BUTTON:
+                            # print("Test Button")
+                            # screen.blit(test_image, (0, 0))
+                        # Gets the card associated with the index the user selected.
+                        chosen_card = user.hand[buttons.index(button_clicked)]
+                        # Checks user choice, and makes the move.
+                        valid = user.move(chosen_card, play_pile[-1])
+                        if valid is True:
+                            # Now continues with the turn.
+                            moves_made += 1
+                            # Now regenerates user hand GUI.
+                            for button in buttons:
+                                try:
+                                    screen.blit(
+                                        user.hand[buttons.index(button)].display,
+                                        (button[BUTTONS_X], button[BUTTONS_Y]))
+                                except IndexError:
+                                    # If the hand has less cards then doesn't draw that card.
+                                    pygame.draw.rect(screen, LIGHT_GREEN, [
+                                        button[BUTTONS_X], button[BUTTONS_Y],
+                                        button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
+                            # Now checks whether the player put down a special card.
+                            # If they put down a wildcard then changes the colour to selected one.
+                            if chosen_card.function == "wildcard" or chosen_card.function == "pickup four":
+                                # Asks user which colour they want to change wildcard to.
+                                # Draws it onscreen.
+                                pygame.draw.rect(screen, DARK_GREEN, [1300, 300, 600, 425])
+                                screen.blit(draw_text("Select the colour to change to:"), (1400, 310))
+                                for button in wildcard_colour_buttons:
+                                    surface = pygame.Surface((button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]))
+                                    surface.fill(button[BUTTONS_COLOUR])
+                                    screen.blit(surface, (button[BUTTONS_X], button[BUTTONS_Y]))
+                                wildcard_colour_choice = "UNDECIDED"
+                            else:
+                                # If they put down a pickup two or four then makes computer pick up.
+                                # If they put down a reverse or skip then switches the turn back to player.
+                                # computer.generate_card()
+                                print(moves_made)
                         else:
-                            # If they put down a pickup two or four then makes computer pick up.
-                            # If they put down a reverse or skip then switches the turn back to player.
-                            # computer.generate_card()
-                            print(moves_made)
+                            print("Invalid move.")
                     else:
-                        print("Invalid move.")
+                        print("Button not associated with card in current hand.")
                 else:
                     print("No button pressed.")
             else:
@@ -493,15 +498,14 @@ while running:
                 button_clicked = button_click(mouse_x, mouse_y, wildcard_colour_buttons)
                 # Checks if there was an actual button clicked.
                 if button_clicked != None:
-                    wildcard_colour_choice = button_clicked[BUTTONS_COLOUR]
                     # Takes the colour of the button and saves.
-                    wildcard_colour_choice = button_clicked[BUTTONS_COLOUR]
+                    wildcard_colour_choice = button_clicked[BUTTONS_TEXT]
                     # Updates its colour to the colour user asked for.
                     chosen_card.colour = wildcard_colour_choice
                     # Resets variable.
                     wildcard_colour_choice = None
                     # Now draws over popup to hide it.
-                    pygame.draw.rect(screen, LIGHT_GREEN, [1300, 300, 600, 400])
+                    pygame.draw.rect(screen, LIGHT_GREEN, [1300, 300, 600, 425])
                     # Debug print.
                     print(chosen_card.colour)
                     # If they put down a pickup two or four then makes computer pick up.
