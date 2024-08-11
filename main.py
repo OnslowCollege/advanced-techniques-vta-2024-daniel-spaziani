@@ -362,8 +362,13 @@ computer = Player()
 # Gets seven random cards from the deck, and gives them to each player.
 # Ensures there are no double ups, and that cards are all unique.
 verify_deal(user, computer)
-# Now gets random card from deck and puts it into play pile to start.
-play_pile.append(DECK[randint(0, len(DECK) - 1)])
+# Generates a starting card for the play pile.
+starting_card = DECK[randint(0, len(DECK) - 1)]
+# If the card is a special one, that is invalid, so keeps generating until a normal one found.
+while starting_card.function != "normal":
+    starting_card = DECK[randint(0, len(DECK) - 1)]
+# Once the starting card has been found, appends to play pile.
+play_pile.append(starting_card)
 # Now button lists are created and added to button list.
 # test_button = [0, 0, 200, 50, "Button", RED]
 # buttons.append(test_button)
@@ -486,6 +491,14 @@ while running:
                                 # If they put down a pickup two or four then makes computer pick up.
                                 # If they put down a reverse or skip then switches the turn back to player.
                                 # computer.generate_card()
+                                # If computer has made player pickup cards, then adds them to hand.
+                                # if computer_card_choice.function == "pickup two" or computer_card_choice.function == "pickup four":
+                                    # TODO: Generate cards and readd them to user hand.
+                                    # Then adds back card images.
+                                    # button = buttons[user.hand.index(NEW CARD (RENAME))]
+                                    # button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                                    # Finally adds button to screen.
+                                    # screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                                 print(moves_made)
                         else:
                             print("Invalid move.")
@@ -511,4 +524,5 @@ while running:
                     # If they put down a pickup two or four then makes computer pick up.
                     # If they put down a reverse or skip then switches the turn back to player.
                     # computer.generate_card()
+                    # TODO: COPY CARD READDITION TO USER HAND FROM ABOVE.
                     print(moves_made)
