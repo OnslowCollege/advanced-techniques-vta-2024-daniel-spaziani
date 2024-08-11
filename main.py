@@ -183,6 +183,9 @@ class Player:
         """Lets player make their move, and runs card change function."""
         return user_card.calculate_change(card_placed_on, self)
 
+    def generate_move(self, card_placed_on, COMPUTER_TYPE): #CHANGE VAR NAME
+        """Generates a move for the computer, using card in pile."""
+
 
 # Constant for deck of cards, with card items to create deck list to pick from.
 DECK: list[Card] = [
