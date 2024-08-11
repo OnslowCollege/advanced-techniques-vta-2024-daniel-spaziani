@@ -493,10 +493,21 @@ while running:
                                 # computer.generate_card()
                                 # If computer has made player pickup cards, then adds them to hand.
                                 # if computer_card_choice.function == "pickup two" or computer_card_choice.function == "pickup four":
-                                    # TODO: Generate cards and readd them to user hand.
+                                    # Generates new cards for player as required.
+                                    # new_cards = []
+                                    # Checks whether to add 2 or 4 and adds accordingly.
+                                    # if computer_card_choice.function == "pickup two":
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    # elif computer_card_choice.function == "pickup four":
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                     # Then adds back card images.
-                                    # button = buttons[user.hand.index(NEW CARD (RENAME))]
-                                    # button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                                    # for card in new_cards:
+                                        # button = buttons[user.hand.index(card)]
+                                        # button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
                                     # Finally adds button to screen.
                                     # screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                                 print(moves_made)
