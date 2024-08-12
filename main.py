@@ -185,6 +185,26 @@ class Player:
 
     def generate_move(self, card_placed_on, COMPUTER_TYPE): #CHANGE VAR NAME
         """Generates a move for the computer, using card in pile."""
+        # Starts by applying the specific weighting preferences of each class.
+        # TODO: DECIDE COMPUTER WEIGHTING AND PREFERENCES.
+        # Does this by adding copies of cards into the hand, making them more likely.
+        # Now creates var used in loop, and repeats card selection until it's valid.
+        computer_move_valid = False
+        while computer_move_valid is False:
+            # Now chooses a random card from the hand.
+            card_chosen = self.hand[randint(0, len(self.hand) - 1)]
+            # Checks it doesn't overflow player's hand.
+            if card_chosen.function == "pickup two" and len(user.hand) < 5:
+                # Playing it will increase user hand too much, and as such not valid.
+                pass
+            else:
+                # Now checks the same for pickup fours.
+                if card_chosen.function == "pickup four" and len(user.hand) < 3:
+                    # It increases hand to too much and is invalid.
+                    pass
+                else:
+                    # Now checks it with card calculate function.
+                    computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
 
 
 # Constant for deck of cards, with card items to create deck list to pick from.
