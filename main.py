@@ -183,11 +183,11 @@ class Player:
         """Lets player make their move, and runs card change function."""
         return user_card.calculate_change(card_placed_on, self)
 
-    def generate_move(self, card_placed_on, COMPUTER_TYPE): #CHANGE VAR NAME
+    def generate_move(self, card_placed_on): #TODO: , COMPUTER_TYPE): CHANGE VAR NAME
         """Generates a move for the computer, using card in pile."""
         # Starts by applying the specific weighting preferences of each class.
         # TODO: DECIDE COMPUTER WEIGHTING AND PREFERENCES.
-        # Does this by adding copies of cards into the hand, making them more likely.
+        # Does this by adding copies of cards into copy of hand, making them more likely.
         # Now creates var used in loop, and repeats card selection until it's valid.
         computer_move_valid = False
         while computer_move_valid is False:
@@ -205,6 +205,17 @@ class Player:
                 else:
                     # Now checks it with card calculate function.
                     computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
+        # Now if the computer has placed a wildcard it must choose a colour for it.
+        if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
+            # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
+            # Chooses a colour based on colour of a random card in hand.
+            # This means it's weighted towards the colours it has more of in its hand.
+            # Chooses card, and gets its colour.
+            computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+            # Now changes most recent card colour to reflect choice.
+            play_pile[-1].colour = computer_wildcard_colour
+        # Returns the card choice.
+        return play_pile[-1]
 
 
 # Constant for deck of cards, with card items to create deck list to pick from.
@@ -513,7 +524,7 @@ while running:
                             else:
                                 # If they put down a pickup two or four then makes computer pick up.
                                 # If they put down a reverse or skip then switches the turn back to player.
-                                # computer.generate_card()
+                                computer_card_choice = computer.generate_move(play_pile[-1])
                                 # If computer has made player pickup cards, then adds them to hand.
                                 # if computer_card_choice.function == "pickup two" or computer_card_choice.function == "pickup four":
                                     # Generates new cards for player as required.
@@ -557,6 +568,6 @@ while running:
                     print(chosen_card.colour)
                     # If they put down a pickup two or four then makes computer pick up.
                     # If they put down a reverse or skip then switches the turn back to player.
-                    # computer.generate_card()
+                    computer_card_choice = computer.generate_move(play_pile[-1])
                     # TODO: COPY CARD READDITION TO USER HAND FROM ABOVE.
                     print(moves_made)
