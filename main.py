@@ -190,30 +190,49 @@ class Player:
         # Does this by adding copies of cards into copy of hand, making them more likely.
         # Now creates var used in loop, and repeats card selection until it's valid.
         computer_move_valid = False
+        # Also creates variable to count repetitions, if it's too high it'll take action.
+        move_valid_check_repetitions = 0
         while computer_move_valid is False:
-            # Now chooses a random card from the hand.
-            card_chosen = self.hand[randint(0, len(self.hand) - 1)]
-            # Checks it doesn't overflow player's hand.
-            if card_chosen.function == "pickup two" and len(user.hand) < 5:
-                # Playing it will increase user hand too much, and as such not valid.
-                pass
+            # DEBUG:.
+            print("\n\n")
+            for ajjhfks in self.hand:
+                print(ajjhfks.function, ajjhfks.number)
+            # Checks if it's repeated too many times, if so it'll see if computer needs to pickup.
+            if move_valid_check_repetitions > 100:
+                # None of the cards in hand are valid and therefore the computer must pickup.
+                # Appends new random card to computer's hand.
+                self.hand.append(DECK[randint(0, len(DECK) - 1)])
+                # DEBUG.
+                print("PICKUP")
             else:
-                # Now checks the same for pickup fours.
-                if card_chosen.function == "pickup four" and len(user.hand) < 3:
-                    # It increases hand to too much and is invalid.
+                # Now chooses a random card from the hand.
+                card_chosen = self.hand[randint(0, len(self.hand) - 1)]
+                # Checks it doesn't overflow player's hand.
+                if card_chosen.function == "pickup two" and len(user.hand) > 5:
+                    # Playing it will increase user hand too much, and as such not valid.
                     pass
                 else:
-                    # Now checks it with card calculate function.
-                    computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
-        # Now if the computer has placed a wildcard it must choose a colour for it.
-        if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
-            # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
-            # Chooses a colour based on colour of a random card in hand.
-            # This means it's weighted towards the colours it has more of in its hand.
-            # Chooses card, and gets its colour.
-            computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
-            # Now changes most recent card colour to reflect choice.
-            play_pile[-1].colour = computer_wildcard_colour
+                    # Now checks the same for pickup fours.
+                    if card_chosen.function == "pickup four" and len(user.hand) > 3:
+                        # It increases hand to too much and is invalid.
+                        pass
+                    else:
+                        # Now checks it with card calculate function.
+                        computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
+            # Now if the computer has placed a wildcard it must choose a colour for it.
+            if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
+                # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
+                # Chooses a colour based on colour of a random card in hand.
+                # This means it's weighted towards the colours it has more of in its hand.
+                # Chooses card, and gets its colour.
+                computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+                # Redoes it until card gives a colour that is not None.
+                while computer_wildcard_colour == "none":
+                    computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+                # Now changes most recent card colour to reflect choice.
+                play_pile[-1].colour = computer_wildcard_colour
+            # Adds to counter.
+            move_valid_check_repetitions += 1
         # Returns the card choice.
         return play_pile[-1]
 
@@ -389,7 +408,6 @@ def button_click(mouse_x, mouse_y, buttons):
 # Game setup.
 # Creates user instance of Player.
 user = Player()
-# TODO: DELETE THIS, ONLY FOR DEBUGGING.
 computer = Player()
 # Asks user who they want to face, validates, and then selects opponent.
 # Starts by dealing cards to both the user and the other player.
@@ -525,25 +543,26 @@ while running:
                                 # If they put down a pickup two or four then makes computer pick up.
                                 # If they put down a reverse or skip then switches the turn back to player.
                                 computer_card_choice = computer.generate_move(play_pile[-1])
-                                # If computer has made player pickup cards, then adds them to hand.
-                                # if computer_card_choice.function == "pickup two" or computer_card_choice.function == "pickup four":
-                                    # Generates new cards for player as required.
-                                    # new_cards = []
-                                    # Checks whether to add 2 or 4 and adds accordingly.
-                                    # if computer_card_choice.function == "pickup two":
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    # elif computer_card_choice.function == "pickup four":
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                        # new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    # Then adds back card images.
-                                    # for card in new_cards:
-                                        # button = buttons[user.hand.index(card)]
-                                        # button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                                # Generates new cards for player as required.
+                                new_cards = []
+                                # Checks whether to add 2 or 4 depending on card computer put down.
+                                if computer_card_choice.function == "pickup two":
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                elif computer_card_choice.function == "pickup four":
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])                                        
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                # Now checks if player doesn't have the right cards to make this next move.
+                                # If so then makes them pick up until they do.
+                                # TODO: THIS.
+                                # Then adds back card images.
+                                for card in new_cards:
+                                    button = buttons[user.hand.index(card)]
+                                    button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
                                     # Finally adds button to screen.
-                                    # screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
+                                    screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                                 print(moves_made)
                         else:
                             print("Invalid move.")
@@ -569,5 +588,21 @@ while running:
                     # If they put down a pickup two or four then makes computer pick up.
                     # If they put down a reverse or skip then switches the turn back to player.
                     computer_card_choice = computer.generate_move(play_pile[-1])
-                    # TODO: COPY CARD READDITION TO USER HAND FROM ABOVE.
+                    # Generates new cards for player as required.
+                    new_cards = []
+                    # Checks whether to add 2 or 4 and adds accordingly.
+                    if computer_card_choice.function == "pickup two":
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                    elif computer_card_choice.function == "pickup four":
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                    # Then adds back card images.
+                    for card in new_cards:
+                        button = buttons[user.hand.index(card)]
+                        button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                        # Finally adds button to screen.
+                        screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                     print(moves_made)
