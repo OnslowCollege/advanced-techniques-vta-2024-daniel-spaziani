@@ -129,9 +129,8 @@ class Card:
         self.function = function
         self.display = display
 
-    def calculate_change(self, card_placed_on, player_who_placed) -> bool:
-        """Based on cards, calculate validity and what values to change."""
-        # Starts by working out whether the card play is valid or not.
+    def check_valid(self, card_placed_on):
+        """Checks if self is valid to be placed ontop of other card, and returns."""
         if (
             self.colour != card_placed_on.colour
             and self.number != card_placed_on.number
@@ -146,6 +145,12 @@ class Card:
         else:
             # Else it is valid.
             valid = True
+        return valid
+
+    def calculate_change(self, card_placed_on, player_who_placed) -> bool:
+        """Based on cards, calculate validity and what values to change."""
+        # Starts by working out whether the card play is valid or not.
+        valid = self.check_valid(card_placed_on)
         if valid is True:
             # The programme now knows that the move is valid.
             # Now appends the function to the list.
@@ -204,35 +209,34 @@ class Player:
                 self.hand.append(DECK[randint(0, len(DECK) - 1)])
                 # DEBUG.
                 print("PICKUP")
+            # Now chooses a random card from the hand.
+            card_chosen = self.hand[randint(0, len(self.hand) - 1)]
+            # Checks it doesn't overflow player's hand.
+            if card_chosen.function == "pickup two" and len(user.hand) > 5:
+                # Playing it will increase user hand too much, and as such not valid.
+                pass
             else:
-                # Now chooses a random card from the hand.
-                card_chosen = self.hand[randint(0, len(self.hand) - 1)]
-                # Checks it doesn't overflow player's hand.
-                if card_chosen.function == "pickup two" and len(user.hand) > 5:
-                    # Playing it will increase user hand too much, and as such not valid.
+                # Now checks the same for pickup fours.
+                if card_chosen.function == "pickup four" and len(user.hand) > 3:
+                    # It increases hand to too much and is invalid.
                     pass
                 else:
-                    # Now checks the same for pickup fours.
-                    if card_chosen.function == "pickup four" and len(user.hand) > 3:
-                        # It increases hand to too much and is invalid.
-                        pass
-                    else:
-                        # Now checks it with card calculate function.
-                        computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
-            # Now if the computer has placed a wildcard it must choose a colour for it.
-            if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
-                # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
-                # Chooses a colour based on colour of a random card in hand.
-                # This means it's weighted towards the colours it has more of in its hand.
-                # Chooses card, and gets its colour.
-                computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
-                # Redoes it until card gives a colour that is not None.
-                while computer_wildcard_colour == "none":
-                    computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
-                # Now changes most recent card colour to reflect choice.
-                play_pile[-1].colour = computer_wildcard_colour
+                    # Now checks it with card calculate function.
+                    computer_move_valid = card_chosen.calculate_change(card_placed_on, self)
             # Adds to counter.
             move_valid_check_repetitions += 1
+        # Now if the computer has placed a wildcard it must choose a colour for it.
+        if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
+            # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
+            # Chooses a colour based on colour of a random card in hand.
+            # This means it's weighted towards the colours it has more of in its hand.
+            # Chooses card, and gets its colour.
+            computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+            # Redoes it until card gives a colour that is not None.
+            while computer_wildcard_colour == "none":
+                computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+            # Now changes most recent card colour to reflect choice.
+            play_pile[-1].colour = computer_wildcard_colour
         # Returns the card choice.
         return play_pile[-1]
 
@@ -551,18 +555,36 @@ while running:
                                     new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                 elif computer_card_choice.function == "pickup four":
                                     new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])                                        
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                     new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                     new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                 # Now checks if player doesn't have the right cards to make this next move.
                                 # If so then makes them pick up until they do.
-                                # TODO: THIS.
+                                # Starts by creating valid variable to use.
+                                user_hand_valid_list = []
+                                # Now checks if user needs to pick up a card as they're unable to make next move.
+                                for card in user.hand:
+                                    # Does check validity function for each card.
+                                    user_hand_valid_list.append(card.check_valid(computer_card_choice))
+                                if True not in user_hand_valid_list:
+                                    # If there are no valid cards then user needs a new card.
+                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    # Repeats adding a new card until one of them works.
+                                    while new_cards[-1].check_valid(computer_card_choice) is False:
+                                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                 # Then adds back card images.
                                 for card in new_cards:
-                                    button = buttons[user.hand.index(card)]
-                                    button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
-                                    # Finally adds button to screen.
-                                    screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
+                                    user.hand.append(card)
+                                    try:
+                                        button = buttons[user.hand.index(card)]
+                                    except IndexError:
+                                        # If the user has too many cards in their hand that it overflows then they lose.
+                                        print("You lose")
+                                        running = False
+                                    else:
+                                        button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                                        # Finally adds button to screen.
+                                        screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                                 print(moves_made)
                         else:
                             print("Invalid move.")
@@ -599,10 +621,31 @@ while running:
                         new_cards.append(DECK[randint(0, len(DECK) - 1)])
                         new_cards.append(DECK[randint(0, len(DECK) - 1)])
                         new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                    # Now checks if player doesn't have the right cards to make this next move.
+                    # If so then makes them pick up until they do.
+                    # Starts by creating valid variable to use.
+                    user_hand_valid_list = []
+                    # Now checks if user needs to pick up a card as they're unable to make next move.
+                    for card in user.hand:
+                        # Does check validity function for each card.
+                        user_hand_valid_list.append(card.check_valid(computer_card_choice))
+                    if True not in user_hand_valid_list:
+                        # If there are no valid cards then user needs a new card.
+                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        # Repeats adding a new card until one of them works.
+                        while new_cards[-1].check_valid(computer_card_choice) is False:
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
                     # Then adds back card images.
                     for card in new_cards:
-                        button = buttons[user.hand.index(card)]
-                        button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
-                        # Finally adds button to screen.
-                        screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
+                        user.hand.append(card)
+                        try:
+                            button = buttons[user.hand.index(card)]
+                        except IndexError:
+                            # If the user has too many cards in their hand that it overflows then they lose.
+                            print("You lose")
+                            running = False
+                        else:
+                            button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+                            # Finally adds button to screen.
+                            screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                     print(moves_made)
