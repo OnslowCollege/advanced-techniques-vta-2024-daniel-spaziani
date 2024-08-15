@@ -145,6 +145,11 @@ class Card:
         else:
             # Else it is valid.
             valid = True
+        # DEBUG.
+        print(f"""\nCHECK VALID:
+        CARD: {self.number, self.colour, self.function}
+        CARD PLACED ON: {card_placed_on.number, card_placed_on.colour, card_placed_on.function}
+        {valid}""")
         return valid
 
     def calculate_change(self, card_placed_on, player_who_placed) -> bool:
@@ -226,7 +231,7 @@ class Player:
             # Adds to counter.
             move_valid_check_repetitions += 1
         # Now if the computer has placed a wildcard it must choose a colour for it.
-        if card_chosen.function == "pickup two" or card_chosen.function == "pickup four":
+        if card_chosen.function == "wildcard" or card_chosen.function == "pickup four":
             # TODO: ADD MORE LOGIC TO THIS WHEN YOU DO WEIGHTING.
             # Chooses a colour based on colour of a random card in hand.
             # This means it's weighted towards the colours it has more of in its hand.
@@ -235,8 +240,12 @@ class Player:
             # Redoes it until card gives a colour that is not None.
             while computer_wildcard_colour == "none":
                 computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+            # DEBUG:
+            print(computer_wildcard_colour)
             # Now changes most recent card colour to reflect choice.
             play_pile[-1].colour = computer_wildcard_colour
+            # DEBUG:
+            print(play_pile[-1].colour)
         # Returns the card choice.
         return play_pile[-1]
 
@@ -531,6 +540,15 @@ while running:
                                     pygame.draw.rect(screen, LIGHT_GREEN, [
                                         button[BUTTONS_X], button[BUTTONS_Y],
                                         button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
+                            # Checks if either of the hands are empty and if so ends the game.
+                            if user.hand == []:
+                                # Tells the user they won if their hand is empty first.
+                                print("You won!")
+                                running = False
+                            elif computer.hand == []:
+                                # If computer won then tells user they lost.
+                                print("You lost")
+                                running = False
                             # Now checks whether the player put down a special card.
                             # If they put down a wildcard then changes the colour to selected one.
                             if chosen_card.function == "wildcard" or chosen_card.function == "pickup four":
