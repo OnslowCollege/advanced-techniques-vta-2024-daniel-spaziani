@@ -562,34 +562,62 @@ while running:
                                     screen.blit(surface, (button[BUTTONS_X], button[BUTTONS_Y]))
                                 wildcard_colour_choice = "UNDECIDED"
                             else:
-                                # If they put down a pickup two or four then makes computer pick up.
+                                # If player puts down a pickup two or four then makes computer pick up.
+                                if chosen_card.function == "pickup two":
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                elif chosen_card.function == "pickup four":
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                 # If they put down a reverse or skip then switches the turn back to player.
-                                computer_card_choice = computer.generate_move(play_pile[-1])
-                                # Generates new cards for player as required.
-                                new_cards = []
-                                # Checks whether to add 2 or 4 depending on card computer put down.
-                                if computer_card_choice.function == "pickup two":
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                elif computer_card_choice.function == "pickup four":
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                # Now checks if player doesn't have the right cards to make this next move.
-                                # If so then makes them pick up until they do.
-                                # Starts by creating valid variable to use.
-                                user_hand_valid_list = []
-                                # Now checks if user needs to pick up a card as they're unable to make next move.
-                                for card in user.hand:
-                                    # Does check validity function for each card.
-                                    user_hand_valid_list.append(card.check_valid(computer_card_choice))
-                                if True not in user_hand_valid_list:
-                                    # If there are no valid cards then user needs a new card.
-                                    new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    # Repeats adding a new card until one of them works.
-                                    while new_cards[-1].check_valid(computer_card_choice) is False:
+                                if chosen_card.function == "reverse" or chosen_card.function == "skip":
+                                    # Then skip back to user's turn.
+                                    # Checks if user has any valid card in their hand to play next.
+                                    user_hand_valid_list = []
+                                    new_cards = []
+                                    # Now checks if user needs to pick up a card as they're unable to make next move.
+                                    for card in user.hand:
+                                        # Does check validity function for each card.
+                                        user_hand_valid_list.append(card.check_valid(play_pile[-1]))
+                                    if True not in user_hand_valid_list:
+                                        # If there are no valid cards then user needs a new card.
                                         new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # Repeats adding a new card until one of them works.
+                                        while new_cards[-1].check_valid(play_pile[-1]) is False:
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                else:
+                                    # Continues onto computer's hand.
+                                    new_cards = []
+                                    computer_card_choice = None
+                                    # Repeats until computer stops placing skips.
+                                    while computer_card_choice == None or computer_card_choice.function == "skip" or computer_card_choice.function == "reverse":
+                                        computer_card_choice = computer.generate_move(play_pile[-1])
+                                        # Generates new cards for player as required.
+                                        # Checks whether to add 2 or 4 depending on card computer put down.
+                                        if computer_card_choice.function == "pickup two":
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        elif computer_card_choice.function == "pickup four":
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    # Now checks if player doesn't have the right cards to make this next move.
+                                    # If so then makes them pick up until they do.
+                                    # Starts by creating valid variable to use.
+                                    user_hand_valid_list = []
+                                    # Now checks if user needs to pick up a card as they're unable to make next move.
+                                    for card in user.hand:
+                                        # Does check validity function for each card.
+                                        user_hand_valid_list.append(card.check_valid(computer_card_choice))
+                                    if True not in user_hand_valid_list:
+                                        # If there are no valid cards then user needs a new card.
+                                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                        # Repeats adding a new card until one of them works.
+                                        while new_cards[-1].check_valid(computer_card_choice) is False:
+                                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                 # Then adds back card images.
                                 for card in new_cards:
                                     user.hand.append(card)
@@ -625,20 +653,21 @@ while running:
                     pygame.draw.rect(screen, LIGHT_GREEN, [1300, 300, 600, 425])
                     # Debug print.
                     print(chosen_card.colour)
-                    # If they put down a pickup two or four then makes computer pick up.
-                    # If they put down a reverse or skip then switches the turn back to player.
-                    computer_card_choice = computer.generate_move(play_pile[-1])
                     # Generates new cards for player as required.
                     new_cards = []
-                    # Checks whether to add 2 or 4 and adds accordingly.
-                    if computer_card_choice.function == "pickup two":
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                    elif computer_card_choice.function == "pickup four":
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                        new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                    computer_card_choice = None
+                    # Repeats until computer stops placing skips.
+                    while computer_card_choice == None or computer_card_choice.function == "skip" or computer_card_choice.function == "reverse":
+                        computer_card_choice = computer.generate_move(play_pile[-1])
+                        # Checks whether to add 2 or 4 and adds accordingly.
+                        if computer_card_choice.function == "pickup two":
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                        elif computer_card_choice.function == "pickup four":
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                            new_cards.append(DECK[randint(0, len(DECK) - 1)])
                     # Now checks if player doesn't have the right cards to make this next move.
                     # If so then makes them pick up until they do.
                     # Starts by creating valid variable to use.
