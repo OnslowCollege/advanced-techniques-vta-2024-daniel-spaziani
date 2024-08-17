@@ -212,17 +212,19 @@ class Player:
                 # None of the cards in hand are valid and therefore the computer must pickup.
                 # Appends new random card to computer's hand.
                 self.hand.append(DECK[randint(0, len(DECK) - 1)])
+                # Now resets the repetitions variable.
+                move_valid_check_repetitions = 0
                 # DEBUG.
                 print("PICKUP")
             # Now chooses a random card from the hand.
             card_chosen = self.hand[randint(0, len(self.hand) - 1)]
             # Checks it doesn't overflow player's hand.
-            if card_chosen.function == "pickup two" and len(user.hand) > 5:
+            if card_chosen.function == "pickup two" and len(user.hand) > 9:
                 # Playing it will increase user hand too much, and as such not valid.
                 pass
             else:
                 # Now checks the same for pickup fours.
-                if card_chosen.function == "pickup four" and len(user.hand) > 3:
+                if card_chosen.function == "pickup four" and len(user.hand) > 7:
                     # It increases hand to too much and is invalid.
                     pass
                 else:
@@ -452,6 +454,16 @@ card_6_button = [1285, 750, 130, 182, "Card 6", LIGHT_GREEN]
 buttons.append(card_6_button)
 card_7_button = [1485, 750, 130, 182, "Card 7", LIGHT_GREEN]
 buttons.append(card_7_button)
+card_8_button = [85, 750, 130, 182, "Card 8", LIGHT_GREEN]
+buttons.append(card_8_button)
+card_9_button = [1685, 750, 130, 182, "Card 9", LIGHT_GREEN]
+buttons.append(card_9_button)
+card_10_button = [85, 525, 130, 182, "Card 10", LIGHT_GREEN]
+buttons.append(card_10_button)
+card_11_button = [285, 525, 130, 182, "Card 11", LIGHT_GREEN]
+buttons.append(card_11_button)
+card_12_button = [485, 525, 130, 182, "Card 12", LIGHT_GREEN]
+buttons.append(card_12_button)
 # Now puts each button on the screen.
 for button in buttons:
     # Starts by making a surface with the x and y sizes.
@@ -459,10 +471,12 @@ for button in buttons:
     button.append(pygame.Surface((button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE])))
     # Fills it with the required colour.
     button[BUTTONS_BUTTON_OBJECT].fill(button[BUTTONS_COLOUR])
-    # Adds card image.
-    button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
-    # Finally adds button to screen.
-    screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
+    # Only adds card images for buttons in the range of the user's current hand.
+    if buttons.index(button) < len(user.hand):
+        # Adds card image.
+        button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
+        # Finally adds button to screen.
+        screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
 # The buttons are added to a list that can be checked.
 # Creates red button.
 wildcard_colour_buttons.append([1350, 350, 200, 150, "red", RED])
