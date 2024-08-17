@@ -9,6 +9,7 @@ Date: 17/6/24
 
 from random import randint
 import pygame
+from time import sleep
 
 # Constant for number of cards players start with in their hands.
 HAND_SIZE = 7
@@ -420,6 +421,34 @@ def button_click(mouse_x, mouse_y, buttons):
             return button
 
 
+def computer_graphics_refresh(computer_hand):
+    """Completely redraws computer hand to screen."""
+    # Rewrites over all existing cards on screen.
+    pygame.draw.rect(screen, LIGHT_GREEN, [0, 0, 1920, 300])
+    card_locations = []
+    # Creates locations for each card and appends them.
+    card_locations.append([100, 50])
+    card_locations.append([250, 50])
+    card_locations.append([400, 50])
+    card_locations.append([550, 50])
+    card_locations.append([700, 50])
+    card_locations.append([850, 50])
+    card_locations.append([1000, 50])
+    card_locations.append([1150, 50])
+    card_locations.append([1300, 50])
+    card_locations.append([1450, 50])
+    card_locations.append([1600, 50])
+    card_locations.append([1750, 50])
+    for card_location in card_locations:
+        if card_locations.index(card_location) < len(computer_hand):
+            screen.blit(card_back, card_location)
+    if len(computer_hand) <= len(card_locations):
+        return True
+    else:
+        print("You win!")
+        return False
+
+
 # Game setup.
 # Creates user instance of Player.
 user = Player()
@@ -554,6 +583,7 @@ while running:
                                     pygame.draw.rect(screen, LIGHT_GREEN, [
                                         button[BUTTONS_X], button[BUTTONS_Y],
                                         button[BUTTONS_X_SIZE], button[BUTTONS_Y_SIZE]])
+                            pygame.display.update()
                             # Checks if either of the hands are empty and if so ends the game.
                             if user.hand == []:
                                 # Tells the user they won if their hand is empty first.
@@ -566,6 +596,11 @@ while running:
                             # Now checks whether the player put down a special card.
                             # If they put down a wildcard then changes the colour to selected one.
                             if chosen_card.function == "wildcard" or chosen_card.function == "pickup four":
+                                if chosen_card.function == "pickup four":
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
+                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                 # Asks user which colour they want to change wildcard to.
                                 # Draws it onscreen.
                                 pygame.draw.rect(screen, DARK_GREEN, [1300, 300, 600, 425])
@@ -578,11 +613,6 @@ while running:
                             else:
                                 # If player puts down a pickup two or four then makes computer pick up.
                                 if chosen_card.function == "pickup two":
-                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
-                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
-                                elif chosen_card.function == "pickup four":
-                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
-                                    computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                     computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                     computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                 # If they put down a reverse or skip then switches the turn back to player.
@@ -602,6 +632,10 @@ while running:
                                         while new_cards[-1].check_valid(play_pile[-1]) is False:
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                 else:
+                                    screen.blit(play_pile[-1].display, (885, 350))
+                                    running = computer_graphics_refresh(computer.hand)
+                                    pygame.display.update()
+                                    sleep(0.5)
                                     # Continues onto computer's hand.
                                     new_cards = []
                                     computer_card_choice = None
@@ -618,6 +652,10 @@ while running:
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                                    # Gives user time.
+                                    screen.blit(play_pile[-1].display, (885, 350))
+                                    pygame.display.update()
+                                    sleep(0.5)
                                     # Now checks if player doesn't have the right cards to make this next move.
                                     # If so then makes them pick up until they do.
                                     # Starts by creating valid variable to use.
@@ -670,6 +708,10 @@ while running:
                     # Generates new cards for player as required.
                     new_cards = []
                     computer_card_choice = None
+                    running = computer_graphics_refresh(computer.hand)
+                    screen.blit(play_pile[-1].display, (885, 350))
+                    pygame.display.update()
+                    sleep(0.5)
                     # Repeats until computer stops placing skips.
                     while computer_card_choice == None or computer_card_choice.function == "skip" or computer_card_choice.function == "reverse":
                         computer_card_choice = computer.generate_move(play_pile[-1])
@@ -682,6 +724,9 @@ while running:
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
+                    screen.blit(play_pile[-1].display, (885, 350))
+                    pygame.display.update()
+                    sleep(0.5)
                     # Now checks if player doesn't have the right cards to make this next move.
                     # If so then makes them pick up until they do.
                     # Starts by creating valid variable to use.
