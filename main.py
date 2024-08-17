@@ -532,6 +532,7 @@ while running:
     # Adds the top card of the play pile to the GUI.
     pygame.draw.rect(screen, LIGHT_GREEN, [885, 350, 130, 182])
     screen.blit(play_pile[-1].display, (885, 350))
+    running = computer_graphics_refresh(computer.hand)
     # Updates display every loop.
     pygame.display.update()
     # Checks if either of the hands are empty and if so ends the game.
@@ -570,6 +571,7 @@ while running:
                         # Checks user choice, and makes the move.
                         valid = user.move(chosen_card, play_pile[-1])
                         if valid is True:
+                            pygame.draw.rect(screen, LIGHT_GREEN, [1200, 300, 1000, 425])
                             # Now continues with the turn.
                             moves_made += 1
                             # Now regenerates user hand GUI.
@@ -685,11 +687,15 @@ while running:
                                         screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                                 print(moves_made)
                         else:
-                            print("Invalid move.")
-                    else:
-                        print("Button not associated with card in current hand.")
-                else:
-                    print("No button pressed.")
+                            pygame.draw.rect(screen, DARK_GREEN, [1200, 300, 1000, 425])
+                            screen.blit(draw_text("Invalid Move, Try Again"), (1350, 310))
+                            screen.blit(draw_text("Remember, you can only place cards of the same"), (1225, 410))
+                            screen.blit(draw_text("colour or number as the card in play,"), (1225, 510))
+                            screen.blit(draw_text("except wildcards which you may always place."), (1225, 610))
+                    # else:
+                        # print("Button not associated with card in current hand.")
+                # else:
+                    # print("No button pressed.")
             else:
                 # Then checks what they've clicked.
                 button_clicked = button_click(mouse_x, mouse_y, wildcard_colour_buttons)
