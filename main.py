@@ -634,6 +634,11 @@ while running:
                                     computer.hand.append(DECK[randint(0, len(DECK) - 1)])
                                 # If they put down a reverse or skip then switches the turn back to player.
                                 if chosen_card.function == "reverse" or chosen_card.function == "skip":
+                                    pygame.draw.rect(screen, DARK_GREEN, [1200, 300, 1000, 425])
+                                    screen.blit(draw_text("You have placed a reverse or skip card."), (1350, 310))
+                                    screen.blit(draw_text("Therefore,  the computer misses their turn,"), (1225, 410))
+                                    screen.blit(draw_text("and you get another!"), (1225, 510))
+                                    screen.blit(draw_text("You may now play another card."), (1225, 610))
                                     # Then skip back to user's turn.
                                     # Checks if user has any valid card in their hand to play next.
                                     user_hand_valid_list = []
@@ -673,10 +678,15 @@ while running:
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                                    # Gives user time.
-                                    screen.blit(play_pile[-1].display, (885, 350))
-                                    pygame.display.update()
-                                    sleep(0.5)
+                                        # Gives user time.
+                                        screen.blit(play_pile[-1].display, (885, 350))
+                                        pygame.display.update()
+                                        sleep(0.5)
+                                    # Tells player what colour the wildcard is if there is one.
+                                    if computer_card_choice.function == "wildcard" or computer_card_choice.function == "pickup four":
+                                        pygame.draw.rect(screen, DARK_GREEN, [1200, 300, 1000, 425])
+                                        screen.blit(draw_text(f"The computer has selected the colour {computer_card_choice.colour}"), (1225, 310))
+                                        screen.blit(draw_text(f"You may now play any {computer_card_choice.colour} card"), (1225, 410))
                                     # Now checks if player doesn't have the right cards to make this next move.
                                     # If so then makes them pick up until they do.
                                     # Starts by creating valid variable to use.
@@ -755,9 +765,13 @@ while running:
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
                             new_cards.append(DECK[randint(0, len(DECK) - 1)])
-                    screen.blit(play_pile[-1].display, (885, 350))
-                    pygame.display.update()
-                    sleep(0.5)
+                        screen.blit(play_pile[-1].display, (885, 350))
+                        pygame.display.update()
+                        sleep(0.5)
+                    if computer_card_choice.function == "wildcard" or computer_card_choice.function == "pickup four":
+                        pygame.draw.rect(screen, DARK_GREEN, [1200, 300, 1000, 425])
+                        screen.blit(draw_text(f"The computer has selected the colour {computer_card_choice.colour}"), (1225, 310))
+                        screen.blit(draw_text(f"You may now play any {computer_card_choice.colour} card"), (1225, 410))
                     # Now checks if player doesn't have the right cards to make this next move.
                     # If so then makes them pick up until they do.
                     # Starts by creating valid variable to use.
@@ -788,3 +802,6 @@ while running:
                             # Finally adds button to screen.
                             screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
                     print(moves_made)
+        if game_running == False:
+            sleep(5)
+            running = False
