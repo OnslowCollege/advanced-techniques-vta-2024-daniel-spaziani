@@ -104,6 +104,7 @@ yellow_skip = pygame.image.load("yellow_skip.png")
 # Wildcard and pickup four.
 wildcard = pygame.image.load("wild_colour_changer.png")
 pickup_four = pygame.image.load("wild_pick_four.png")
+# Creates the different classes of computer to face.
 
 
 class Card:
@@ -146,11 +147,6 @@ class Card:
         else:
             # Else it is valid.
             valid = True
-        # DEBUG.
-        print(f"""\nCHECK VALID:
-        CARD: {self.number, self.colour, self.function}
-        CARD PLACED ON: {card_placed_on.number, card_placed_on.colour, card_placed_on.function}
-        {valid}""")
         return valid
 
     def calculate_change(self, card_placed_on, player_who_placed) -> bool:
@@ -204,10 +200,6 @@ class Player:
         # Also creates variable to count repetitions, if it's too high it'll take action.
         move_valid_check_repetitions = 0
         while computer_move_valid is False:
-            # DEBUG:.
-            print("\n\n")
-            for ajjhfks in self.hand:
-                print(ajjhfks.function, ajjhfks.number)
             # Checks if it's repeated too many times, if so it'll see if computer needs to pickup.
             if move_valid_check_repetitions > 100:
                 # None of the cards in hand are valid and therefore the computer must pickup.
@@ -215,10 +207,11 @@ class Player:
                 self.hand.append(DECK[randint(0, len(DECK) - 1)])
                 # Now resets the repetitions variable.
                 move_valid_check_repetitions = 0
-                # DEBUG.
-                print("PICKUP")
             # Now chooses a random card from the hand.
-            card_chosen = self.hand[randint(0, len(self.hand) - 1)]
+            try:
+                card_chosen = self.hand[randint(0, len(self.hand) - 1)]
+            except:
+                card_chosen = self.hand[-1]
             # Checks it doesn't overflow player's hand.
             if card_chosen.function == "pickup two" and len(user.hand) > 9:
                 # Playing it will increase user hand too much, and as such not valid.
@@ -239,16 +232,17 @@ class Player:
             # Chooses a colour based on colour of a random card in hand.
             # This means it's weighted towards the colours it has more of in its hand.
             # Chooses card, and gets its colour.
-            computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
-            # Redoes it until card gives a colour that is not None.
-            while computer_wildcard_colour == "none":
+            try:
                 computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
-            # DEBUG:
-            print(computer_wildcard_colour)
-            # Now changes most recent card colour to reflect choice.
-            play_pile[-1].colour = computer_wildcard_colour
-            # DEBUG:
-            print(play_pile[-1].colour)
+            except:
+                # Sample colour as if there's only one card left then computer almost won.
+                computer_wildcard_colour = "blue"
+            else:
+                # Redoes it until card gives a colour that is not None.
+                while computer_wildcard_colour == "none":
+                    computer_wildcard_colour = self.hand[randint(0, len(self.hand) - 1)].colour
+                # Now changes most recent card colour to reflect choice.
+                play_pile[-1].colour = computer_wildcard_colour
         # Returns the card choice.
         return play_pile[-1]
 
@@ -459,9 +453,25 @@ computer = Player()
 verify_deal(user, computer)
 # Generates a starting card for the play pile.
 starting_card = DECK[randint(0, len(DECK) - 1)]
-# If the card is a special one, that is invalid, so keeps generating until a normal one found.
+# If the card is special, that is invalid, so keeps generating until a normal one found.
 while starting_card.function != "normal":
     starting_card = DECK[randint(0, len(DECK) - 1)]
+# Checks if starting card is valid for player.
+starting_card_valid = False
+while starting_card_valid == False:
+    # Checks if card is valid for player.
+    # Now checks if user needs to pick up a card as they're unable to make next move.
+    user_hand_valid_list = []
+    for card in user.hand:
+        # Does check validity function for each card.
+        user_hand_valid_list.append(card.check_valid(starting_card))
+    if True not in user_hand_valid_list:
+        # If there are no valid cards then new starting card needed.
+        # If the card is special, that is invalid, so keeps generating until a normal one found.
+        while starting_card.function != "normal":
+            starting_card = DECK[randint(0, len(DECK) - 1)]
+    else:
+        starting_card_valid = True
 # Once the starting card has been found, appends to play pile.
 play_pile.append(starting_card)
 # Now button lists are created and added to button list.
@@ -514,12 +524,6 @@ wildcard_colour_buttons.append([1650, 350, 200, 150, "green", GREEN])
 wildcard_colour_buttons.append([1350, 550, 200, 150, "blue", BLUE])
 # Creates yellow button.
 wildcard_colour_buttons.append([1650, 550, 200, 150, "yellow", YELLOW])
-# Font test.
-# screen.blit(draw_text("Test 123"), (300, 250))
-# Shapes for testing.
-# pygame.draw.rect(screen, RED, [200, 300, 100, 50])
-# pygame.draw.rect(screen, DARK_GREEN, [250, 400, 200, 50])
-# pygame.draw.rect(screen, RED, [0, 0, 100, 100])
 # Creates card visuals.
 # Variable to continue running loop.
 running = True
@@ -534,24 +538,32 @@ while running:
     screen.blit(play_pile[-1].display, (885, 350))
     game_running = computer_graphics_refresh(computer.hand)
     if game_running == False:
-        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-        screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
-        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        end_screen = pygame.Surface((1920, 1080))
+        end_screen.fill(RED)
+        end_screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
+        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        screen.blit(end_screen, (0, 0))
     # Updates display every loop.
     pygame.display.update()
     # Checks if either of the hands are empty and if so ends the game.
     if user.hand == []:
         # Tells the user they won if their hand is empty first.
         game_running = False
-        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-        screen.blit(draw_text("You completely emptied your hand and have won!"), (200, 500))
-        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        end_screen = pygame.Surface((1920, 1080))
+        end_screen.fill(RED)
+        end_screen.blit(draw_text("You completely emptied your hand and have won!"), (200, 500))
+        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        screen.blit(end_screen, (0, 0))
     elif computer.hand == []:
         # If computer won then tells user they lost.
         game_running = False
-        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-        screen.blit(draw_text("Your opponent was able to play all their cards first, and you have lost."), (200, 500))
-        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        end_screen = pygame.Surface((1920, 1080))
+        end_screen.fill(RED)
+        end_screen.blit(draw_text("Your opponent was able to play all their cards first, and you have lost."), (200, 500))
+        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+        screen.blit(end_screen, (0, 0))
+    if game_running == False:
+        screen.blit(end_screen, (0, 0))
     # Checks for new events.
     for event in pygame.event.get():
         # If the game has been told to quit then exits loop.
@@ -574,9 +586,6 @@ while running:
                     if buttons.index(button_clicked) < len(user.hand):
                         # Checks that against the list and responds.
                         # Depending on which button is pushed, runs appropriate code.
-                        # if buttons.index(button_clicked) == BUTTONS_TEST_BUTTON:
-                            # print("Test Button")
-                            # screen.blit(test_image, (0, 0))
                         # Gets the card associated with the index the user selected.
                         chosen_card = user.hand[buttons.index(button_clicked)]
                         # Checks user choice, and makes the move.
@@ -601,15 +610,19 @@ while running:
                             if user.hand == []:
                                 # Tells the user they won if their hand is empty first.
                                 game_running = False
-                                pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                                screen.blit(draw_text("You completely emptied your hand and have won!"), (200, 500))
-                                screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                end_screen = pygame.Surface((1920, 1080))
+                                end_screen.fill(RED)
+                                end_screen.blit(draw_text("You completely emptied your hand and have won!"), (200, 500))
+                                end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                screen.blit(end_screen, (0, 0))
                             elif computer.hand == []:
                                 # If computer won then tells user they lost.
                                 game_running = False
-                                pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                                screen.blit(draw_text("Your opponent was able to play all their cards first, and you have lost."), (200, 500))
-                                screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                end_screen = pygame.Surface((1920, 1080))
+                                end_screen.fill(RED)
+                                end_screen.blit(draw_text("Your opponent was able to play all their cards first, and you have lost."), (200, 500))
+                                end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                screen.blit(end_screen, (0, 0))
                             # Now checks whether the player put down a special card.
                             # If they put down a wildcard then changes the colour to selected one.
                             if chosen_card.function == "wildcard" or chosen_card.function == "pickup four":
@@ -657,9 +670,11 @@ while running:
                                     screen.blit(play_pile[-1].display, (885, 350))
                                     game_running = computer_graphics_refresh(computer.hand)
                                     if game_running == False:
-                                        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                                        screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
-                                        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                        end_screen = pygame.Surface((1920, 1080))
+                                        end_screen.fill(RED)
+                                        end_screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
+                                        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                        screen.blit(end_screen, (0, 0))
                                     pygame.display.update()
                                     sleep(0.5)
                                     # Continues onto computer's hand.
@@ -709,24 +724,23 @@ while running:
                                     except IndexError:
                                         # If the user has too many cards in their hand that it overflows then they lose.
                                         game_running = False
-                                        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                                        screen.blit(draw_text("Your hand has overflowed and you have lost."), (200, 500))
-                                        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                        end_screen = pygame.Surface((1920, 1080))
+                                        end_screen.fill(RED)
+                                        end_screen.blit(draw_text("Your hand has overflowed and you have lost."), (200, 500))
+                                        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                                        screen.blit(end_screen, (0, 0))
                                     else:
                                         button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
                                         # Finally adds button to screen.
                                         screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
-                                print(moves_made)
+                                        pygame.display.update()
+                                        sleep(0.5)
                         else:
                             pygame.draw.rect(screen, DARK_GREEN, [1200, 300, 1000, 425])
                             screen.blit(draw_text("Invalid Move, Try Again"), (1350, 310))
                             screen.blit(draw_text("Remember, you can only place cards of the same"), (1225, 410))
                             screen.blit(draw_text("colour or number as the card in play,"), (1225, 510))
                             screen.blit(draw_text("except wildcards which you may always place."), (1225, 610))
-                    # else:
-                        # print("Button not associated with card in current hand.")
-                # else:
-                    # print("No button pressed.")
             else:
                 # Then checks what they've clicked.
                 button_clicked = button_click(mouse_x, mouse_y, wildcard_colour_buttons)
@@ -740,16 +754,16 @@ while running:
                     wildcard_colour_choice = None
                     # Now draws over popup to hide it.
                     pygame.draw.rect(screen, LIGHT_GREEN, [1300, 300, 600, 425])
-                    # Debug print.
-                    print(chosen_card.colour)
                     # Generates new cards for player as required.
                     new_cards = []
                     computer_card_choice = None
                     game_running = computer_graphics_refresh(computer.hand)
                     if game_running == False:
-                        pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                        screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
-                        screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                        end_screen = pygame.Surface((1920, 1080))
+                        end_screen.fill(RED)
+                        end_screen.blit(draw_text("The opponent's hand has overflowed and you have won!"), (200, 500))
+                        end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                        screen.blit(end_screen, (0, 0))
                     screen.blit(play_pile[-1].display, (885, 350))
                     pygame.display.update()
                     sleep(0.5)
@@ -794,14 +808,16 @@ while running:
                         except IndexError:
                             # If the user has too many cards in their hand that it overflows then they lose.
                             game_running = False
-                            pygame.draw.rect(screen, RED, [0, 0, 1920, 1080])
-                            screen.blit(draw_text("Your hand has overflowed and you have lost."), (200, 500))
-                            screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                            end_screen = pygame.Surface((1920, 1080))
+                            end_screen.fill(RED)
+                            end_screen.blit(draw_text("Your hand has overflowed and you have lost."), (200, 500))
+                            end_screen.blit(draw_text("Click anywhere to close the game."), (400, 800))
+                            screen.blit(end_screen, (0, 0))
                         else:
                             button[BUTTONS_BUTTON_OBJECT].blit(user.hand[buttons.index(button)].display, (0, 0))
                             # Finally adds button to screen.
                             screen.blit(button[BUTTONS_BUTTON_OBJECT], (button[BUTTONS_X], button[BUTTONS_Y]))
-                    print(moves_made)
+                            pygame.display.update()
+                            sleep(0.5)
         if game_running == False:
-            sleep(5)
-            running = False
+            screen.blit(end_screen, (0, 0))
